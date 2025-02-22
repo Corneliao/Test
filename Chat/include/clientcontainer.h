@@ -9,6 +9,7 @@
 #include <QJsonArray>
 #include <QFileInfo>
 #include <QQueue>
+#include <QDateTime>
 class UserInfo : public QObject {
     Q_OBJECT
     Q_PROPERTY(QString username READ username WRITE setUsername NOTIFY usernameChanged FINAL)
@@ -80,6 +81,7 @@ public:
     Q_INVOKABLE void sendMessage(const QJsonObject &sender_, const QString &receiver_, const QString &message, const QString &type);
     Q_INVOKABLE void sendFile(const QJsonObject &sender_, const QString &receiver_, const QString &filepath, int index, const QString &messageType);
     Q_INVOKABLE void downloadFile(int index, const QString &fileName, const QString &messageType);
+    Q_INVOKABLE void createGroupChat(const QJsonObject &sender, const QVariant &receivers, const QString &groupName);
 signals:
     void loginSignal(const QJsonObject &json, bool login);
     void userInfoSignal(const QByteArray &data);
@@ -122,7 +124,7 @@ public:
     Q_INVOKABLE void sendFile(const QJsonObject &sender_, const QString &receiver_, const QString &filepath, int index, const QString &messageType);
     Q_INVOKABLE QJsonObject parseFileInfo(const QString &path);
     Q_INVOKABLE void downloadFile(int index, const QString &fileName, const QString &messageType);
-
+    Q_INVOKABLE void createGroupChat(const QJsonObject &sender, const QVariant &receivers, const QString &groupName);
     Q_INVOKABLE QSize getPictureSize(const QString &filepath);
 signals:
     void loginSignal(const QJsonObject &json, bool login);

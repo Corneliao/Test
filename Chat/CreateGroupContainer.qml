@@ -3,6 +3,7 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 import com.global
+import com.client
 
 Popup {
     anchors.centerIn: parent
@@ -19,6 +20,7 @@ Popup {
         ColumnLayout {
             anchors.fill: parent
             CustomSearchBar {
+                id: group_name
                 Layout.preferredWidth: parent.width - 200
                 Layout.preferredHeight: 40
                 placeholder_text: "群聊名称"
@@ -28,6 +30,7 @@ Popup {
                 Layout.alignment: Qt.AlignHCenter
             }
             Flow {
+                id: flow_layout
                 Layout.fillHeight: true
                 Layout.fillWidth: true
                 Layout.margins: 20
@@ -95,6 +98,18 @@ Popup {
                     hoverEnabled: true
                     onEntered: {
                         cursorShape = Qt.PointingHandCursor
+                    }
+                    onClicked: {
+                        if (group_name.searchBar.text.length <= 0)
+                            return
+                        var users = []
+                        for (var i = 0; i < Global.friendModelData.count; i++) {
+                            if (repeat_.itemAt(i).isChecked) {
+                                users.push(repeat_.itemAt(i).friendData)
+                            }
+                        }
+                        Client.createGroupChat(Global.myJsonData, users,
+                                               group_name.searchBar.text)
                     }
                 }
             }

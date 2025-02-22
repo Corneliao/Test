@@ -100,12 +100,16 @@ void ClientWork::ReadClientMessage() {
             qint64 fileSize = object["fileSize"].toInt();
             QString messageType = object["messageType"].toString();
 
-            qDebug() << fileName << fileSize << messageType;
-
             QJsonObject object;
             object.insert("fileName", fileName);
             object.insert("fileSize", fileSize);
             emit this->sendFileSignal(sender_, receiver_, object, messageType);
+        } else if (type == "createGroupChat") {
+            QJsonObject senderData = object["senderData"].toObject();
+            QJsonArray members = object["members"].toArray();
+            QJsonObject groupInfo = object["groupInfo"].toObject();
+            // emit this->createGroupChatSignal(senderData, members, groupInfo);
+            QMetaObject::invokeMethod(this->database_manager, "createGroupChat", Qt::QueuedConnection, Q_ARG(QJsonObject, senderData), Q_ARG(QJsonArray, members), Q_ARG(QJsonObject, groupInfo));
         }
     }
 }
@@ -155,4 +159,12 @@ void ClientWork::sendFile(const QJsonObject &senderData, const QJsonObject &file
     QJsonDocument doc(object);
     QByteArray data = doc.toJson();
     this->m_socket->write(data);
+}
+
+void ClientWork::receivedGroupNotification(const QJsonObject &senderData, const QJsonArray &members, const QJsonObject &groupInfo) {
+    // QJsonObject object;
+    // object.insert("type", "receivedGroupInvite");
+    // object.insert("admin", senderData);
+    // object.insert("members", members);
+    // object.insert("groupInfo", groupInfo);
 }

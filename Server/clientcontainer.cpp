@@ -51,6 +51,16 @@ void Server::sendFileToUser(const QJsonObject &senderData, const QString &receiv
     }
 }
 
+void Server::createGroupChat(const QJsonObject &senderData, const QJsonArray &members, const QJsonObject &groupInfo) {
+    for (int i = 0; i < members.count(); i++) {
+        QMutexLocker locker(&this->mutex);
+        QString account = members[i].toString();
+        if (this->client_account.contains(this->client_account.key(account))) {
+            QMetaObject::invokeMethod(this->client_account.key(account), "receivedGroupNotification", Qt::QueuedConnection, Q_ARG(QJsonObject, senderData), Q_ARG(QJsonArray, members), Q_ARG(QJsonObject, groupInfo));
+        }
+    }
+}
+
 void Server::incomingConnection(qintptr socketDescript) {
     QThread *thread = new QThread;
     ClientWork *work = new ClientWork(socketDescript);
@@ -65,6 +75,7 @@ void Server::incomingConnection(qintptr socketDescript) {
     connect(work, &ClientWork::updateFriendListSignal, this, &Server::updateFriendList, Qt::QueuedConnection);
     connect(work, &ClientWork::sendMessageSignal, this, &Server::sendMessageToUser, Qt::QueuedConnection);
     connect(work, &ClientWork::sendFileSignal, this, &Server::sendFileToUser, Qt::QueuedConnection);
+    connect(work, &ClientWork::createGroupChatSignal, this, &Server::createGroupChat, Qt::QueuedConnection);
     thread->start();
     this->m_clients.insert(thread, work);
 }

@@ -21,6 +21,7 @@ public:
     void updateFriendList(const QString &sender, const QJsonObject &json);
     void sendMessageToUser(const QJsonObject &senderData, const QString &receiver, const QString &message, const QString &type);
     void sendFileToUser(const QJsonObject &senderData, const QString &receiver, const QJsonObject &fileInfo, const QString &messageType);
+    void createGroupChat(const QJsonObject &senderData, const QJsonArray &members, const QJsonObject &groupInfo);
 
 protected:
     void incomingConnection(qintptr socketDescript) override;

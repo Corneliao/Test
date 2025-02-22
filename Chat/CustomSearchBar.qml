@@ -4,6 +4,7 @@ import QtQuick.Controls.Basic
 
 Rectangle {
     property alias placeholder_text: field.placeholderText
+    property alias searchBar: field
     TextField {
         id: field
         width: parent.width - 5

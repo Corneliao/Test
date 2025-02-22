@@ -21,6 +21,7 @@ public:
     Q_INVOKABLE void updateFriendList(const QJsonObject &json);
     Q_INVOKABLE void sendMessage(const QJsonObject &senderData, const QString &message, const QString &type);
     Q_INVOKABLE void sendFile(const QJsonObject &senderData, const QJsonObject &fileInfo, const QString &messageType);
+    Q_INVOKABLE void receivedGroupNotification(const QJsonObject &senderData, const QJsonArray &members, const QJsonObject &groupInfo);
 signals:
     void disconnected();
     void loginSucceedSignal(const QString &account);
@@ -28,6 +29,7 @@ signals:
     void updateFriendListSignal(const QString &sender, const QJsonObject &json);
     void sendMessageSignal(const QJsonObject &senderData, const QString &receiver, const QString &message, const QString &type);
     void sendFileSignal(const QJsonObject &senderData, const QString &receiver, const QJsonObject &fileInfo, const QString &messageType);
+    void createGroupChatSignal(const QJsonObject &senderData, const QJsonArray &members, const QJsonObject &groupInfo);
 
 private:
     void ReadClientMessage();

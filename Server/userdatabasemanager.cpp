@@ -170,3 +170,30 @@ void UserDatabaseManager::selectUserFriend(const QString &account) {
         emit this->friendDataSignal(object);
     }
 }
+
+void UserDatabaseManager::createGroupChat(const QJsonObject &admin, const QJsonArray &members, const QJsonObject &groupInfo) {
+    QSqlDatabase db = QSqlDatabase::database(this->sql_connectionName);
+    if (!db.transaction())
+        return;
+    QSqlQuery query(db);
+    query.prepare("insert into group_chat (group_id,group_name) values (:id,:name)");
+    query.bindValue(":id", groupInfo["groupID"].toInt());
+    query.bindValue(":name", groupInfo["groupName"].toString());
+    if (query.exec()) {
+        query.finish();
+        query.prepare("insert into group_member (group_id,user_id)values (:id,:uid)");
+        query.bindValue(":id", groupInfo["groupID"].toInt());
+        for (int i = 0; i < members.count(); i++) {
+            query.bindValue(":uid", members[i]["account"].toString());
+            if (!query.exec()) {
+                db.rollback();
+                break;
+            }
+        }
+        query.finish();
+        db.commit();
+        emit this->createGroupChatSignal(true, admin, members, groupInfo);
+    } else {
+        qDebug() << __FUNCTION__ << "group_chat failed";
+    }
+}

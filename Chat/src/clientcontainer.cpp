@@ -2,6 +2,7 @@
 #include "../include/miniomanager.h"
 #include <QPixmap>
 #include <qthreadpool.h>
+#include <QUuid>
 UserInfo::UserInfo(QObject *parent) {}
 
 UserInfo::~UserInfo() {
@@ -80,7 +81,10 @@ void UserInfo::setPhone(const QString &newPhone) {
 
 //-----------------Work------------
 
-ClientWork::ClientWork(QObject *parent) {}
+ClientWork::ClientWork(QObject *parent) {
+    // QString uid = QUuid::createUuid().toString();
+    // qDebug() << __FUNCTION__ << uid;
+}
 
 void ClientWork::init() {
     this->m_socket = new QTcpSocket(this);
@@ -220,6 +224,37 @@ void ClientWork::downloadFile(int index, const QString &fileName, const QString 
     connect(minio, &MinioManager::downloadFinishedForFile, this, [=](const QString &_fileName) { emit this->downloadFinishedForFile(_fileName, index); }, Qt::QueuedConnection);
     connect(minio, &MinioManager::downloadFinishedForPicture, this, [=](const QString &_fileName) { emit this->downloadFinishedForPicture(_fileName, index); }, Qt::QueuedConnection);
     QThreadPool::globalInstance()->start(minio);
+}
+
+void ClientWork::createGroupChat(const QJsonObject &sender, const QVariant &receivers, const QString &groupName) {
+    // create GroupInfo
+
+    int group_id = QDateTime::currentMSecsSinceEpoch();
+
+    QJsonObject groupInfo;
+    groupInfo.insert("groupName", groupName);
+    groupInfo.insert("groupID", group_id);
+    groupInfo.insert("admin", sender["account"].toString());
+
+    QJsonArray array;
+
+    QList arrayList = receivers.toList();
+
+    for (int i = 0; i < arrayList.size(); i++) {
+        array.append(arrayList[i].toJsonObject());
+    }
+
+    QJsonObject object;
+    object.insert("type", "createGroupChat");
+    object.insert("senderData", sender);
+
+    object.insert("members", array);
+    object.insert("groupInfo", groupInfo);
+
+    QJsonDocument doc(object);
+    QByteArray data = doc.toJson();
+    this->m_socket->write(data);
+    this->m_socket->flush();
 }
 
 void ClientWork::ReadData() {
@@ -373,6 +408,10 @@ QJsonObject ClientContainer::parseFileInfo(const QString &path) {
 
 void ClientContainer::downloadFile(int index, const QString &fileName, const QString &messageType) {
     QMetaObject::invokeMethod(this->m_clientwork, "downloadFile", Qt::QueuedConnection, Q_ARG(int, index), Q_ARG(QString, fileName), Q_ARG(QString, messageType));
+}
+
+void ClientContainer::createGroupChat(const QJsonObject &sender, const QVariant &receivers, const QString &groupName) {
+    QMetaObject::invokeMethod(this->m_clientwork, "createGroupChat", Qt::QueuedConnection, Q_ARG(QJsonObject, sender), Q_ARG(QVariant, receivers), Q_ARG(QString, groupName));
 }
 
 QSize ClientContainer::getPictureSize(const QString &filepath) {
