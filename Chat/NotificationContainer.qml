@@ -14,6 +14,7 @@ Popup {
     width: 420
     height: 400
     padding: 2
+    Material.roundedScale: Material.MediumScale
 
     Material.background: Qt.rgba(0 / 255, 0 / 255, 0 / 255, 10 / 255)
     contentItem: Item {

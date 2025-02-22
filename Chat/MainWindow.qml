@@ -25,8 +25,8 @@ FramelessWindow {
 
     CreateGroupContainer {
         id: group_
-        width: 400
-        height: 400
+        width: parent.width - 300
+        height: parent.height - 150
     }
 
     RowLayout {
