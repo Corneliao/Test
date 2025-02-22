@@ -7,4 +7,5 @@ QtObject {
     property var myJsonData
     property string unreadMessageCount: "0"
     property string newFriendRequestCount: "0"
+    property ListModel friendModelData
 }

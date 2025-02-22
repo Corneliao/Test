@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
+import com.global
 
 Popup {
     anchors.centerIn: parent
@@ -17,8 +18,85 @@ Popup {
 
         ColumnLayout {
             anchors.fill: parent
-            Rectangle {
+            CustomSearchBar {
+                Layout.preferredWidth: parent.width - 200
+                Layout.preferredHeight: 40
+                placeholder_text: "群聊名称"
+                color: Qt.rgba(0 / 255, 0 / 255, 0 / 255, 40 / 255)
+                radius: 10
+                Layout.topMargin: 80
+                Layout.alignment: Qt.AlignHCenter
+            }
+            Flow {
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+                Layout.margins: 20
+                spacing: 20
+                Repeater {
+                    id: repeat_
+                    model: Global.friendModelData
+                    clip: true
+                    delegate: Rectangle {
+                        property bool isChecked: check_box.checkState
+                        required property int index
+                        required property var friendData
+                        color: Qt.rgba(0 / 255, 0 / 255, 0 / 255, 100 / 255)
+                        width: 200
+                        height: 80
+                        radius: 10
 
+                        RowLayout {
+                            anchors.fill: parent
+                            spacing: 10
+                            Loader {
+                                Layout.fillWidth: true
+                            }
+                            Image {
+                                id: user_head
+                                Layout.preferredHeight: 50
+                                Layout.preferredWidth: 50
+                                source: Qt.url(
+                                            "image://async/http://127.0.0.1:9005/userhead/"
+                                            + friendData.account + ".jpg")
+                                sourceSize: Qt.size(50, 50)
+                            }
+                            Label {
+                                id: user_name
+                                text: friendData.name
+                                color: Qt.color("white")
+                                font.bold: true
+                            }
+                            CheckBox {
+                                id: check_box
+                            }
+                            Loader {
+                                Layout.fillWidth: true
+                            }
+                        }
+                    }
+                }
+            }
+            Rectangle {
+                id: create_button
+                Layout.preferredWidth: 120
+                Layout.preferredHeight: 40
+                Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
+                Layout.bottomMargin: 10
+                color: Qt.rgba(0 / 255, 0 / 255, 0 / 255, 100 / 255)
+                radius: 10
+                Label {
+                    text: "创建"
+                    anchors.centerIn: parent
+                    color: Qt.color("white")
+                    font.bold: true
+                }
+                MouseArea {
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    onEntered: {
+                        cursorShape = Qt.PointingHandCursor
+                    }
+                }
             }
         }
     }

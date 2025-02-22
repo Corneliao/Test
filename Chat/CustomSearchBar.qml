@@ -12,5 +12,8 @@ Rectangle {
         background: Rectangle {
             color: Qt.color("transparent")
         }
+        placeholderTextColor: Qt.rgba(255 / 255, 255 / 255, 255 / 255,
+                                      200 / 255)
+        color: Qt.rgba(255 / 255, 255 / 255, 255 / 255, 200 / 255)
     }
 }

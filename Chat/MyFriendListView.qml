@@ -9,6 +9,7 @@ Item {
 
     Component.onCompleted: {
         Client.selectUserFirend(Global.myJsonData.account)
+        Global.friendModelData = friend_model
     }
 
     function createAddFriendWindow() {
@@ -108,7 +109,7 @@ Item {
         Rectangle {
             Layout.preferredHeight: 40
             Layout.fillWidth: true
-            color: Qt.rgba(0 / 255, 0 / 255, 0 / 255, 20 / 255)
+            color: Qt.rgba(0 / 255, 0 / 255, 0 / 255, 40 / 255)
             radius: 10
             TextField {
                 placeholderText: "Search"
