@@ -28,6 +28,24 @@ void ClientWork::init() {
     connect(this->database_manager, &UserDatabaseManager::loginSignal, this, &ClientWork::loginState, Qt::QueuedConnection);
     connect(this->database_manager, &UserDatabaseManager::userInfoSignal, this, &ClientWork::selectUserInfo, Qt::QueuedConnection);
     connect(this->database_manager, &UserDatabaseManager::friendDataSignal, this, &ClientWork::selectUserFriends, Qt::QueuedConnection);
+    connect(
+            this->database_manager,
+            &UserDatabaseManager::createGroupChatSignal,
+            this,
+            [=](const bool state, const QJsonObject &senderData, const QJsonArray &members, const QJsonObject &groupInfo) {
+                if (state) {
+                    emit this->createGroupChatSignal(senderData, members, groupInfo);
+                } else {
+                    QJsonObject object;
+                    object.insert("type", "createGroupFailed");
+                    object.insert("state", state);
+                    QJsonDocument doc(object);
+                    QByteArray data = doc.toJson();
+                    this->m_socket->write(data);
+                    this->m_socket->flush();
+                }
+            },
+            Qt::QueuedConnection);
     this->sql_thread->start();
 }
 
@@ -108,7 +126,6 @@ void ClientWork::ReadClientMessage() {
             QJsonObject senderData = object["senderData"].toObject();
             QJsonArray members = object["members"].toArray();
             QJsonObject groupInfo = object["groupInfo"].toObject();
-            // emit this->createGroupChatSignal(senderData, members, groupInfo);
             QMetaObject::invokeMethod(this->database_manager, "createGroupChat", Qt::QueuedConnection, Q_ARG(QJsonObject, senderData), Q_ARG(QJsonArray, members), Q_ARG(QJsonObject, groupInfo));
         }
     }
@@ -162,9 +179,15 @@ void ClientWork::sendFile(const QJsonObject &senderData, const QJsonObject &file
 }
 
 void ClientWork::receivedGroupNotification(const QJsonObject &senderData, const QJsonArray &members, const QJsonObject &groupInfo) {
-    // QJsonObject object;
-    // object.insert("type", "receivedGroupInvite");
-    // object.insert("admin", senderData);
-    // object.insert("members", members);
-    // object.insert("groupInfo", groupInfo);
+    qDebug() << "收到傲晴";
+    QJsonObject object;
+    object.insert("type", "receivedGroupInvite");
+    object.insert("admin", senderData);
+    object.insert("members", members);
+    object.insert("groupInfo", groupInfo);
+
+    QJsonDocument doc(object);
+    QByteArray data = doc.toJson(QJsonDocument::Compact);
+    this->m_socket->write(data);
+    this->m_socket->flush();
 }

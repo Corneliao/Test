@@ -187,7 +187,8 @@ void UserDatabaseManager::createGroupChat(const QJsonObject &admin, const QJsonA
             query.bindValue(":uid", members[i]["account"].toString());
             if (!query.exec()) {
                 db.rollback();
-                break;
+                emit this->createGroupChatSignal(false, {}, {}, {});
+                return;
             }
         }
         query.finish();

@@ -54,7 +54,7 @@ void Server::sendFileToUser(const QJsonObject &senderData, const QString &receiv
 void Server::createGroupChat(const QJsonObject &senderData, const QJsonArray &members, const QJsonObject &groupInfo) {
     for (int i = 0; i < members.count(); i++) {
         QMutexLocker locker(&this->mutex);
-        QString account = members[i].toString();
+        QString account = members[i]["account"].toString();
         if (this->client_account.contains(this->client_account.key(account))) {
             QMetaObject::invokeMethod(this->client_account.key(account), "receivedGroupNotification", Qt::QueuedConnection, Q_ARG(QJsonObject, senderData), Q_ARG(QJsonArray, members), Q_ARG(QJsonObject, groupInfo));
         }
