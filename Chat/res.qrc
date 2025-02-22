@@ -1,0 +1,35 @@
+<RCC>
+    <qresource prefix="/">
+        <file>res/ico/friend.png</file>
+        <file>res/ico/friend_sel.png</file>
+        <file>Global.qml</file>
+        <file>res/ico/send.png</file>
+        <file>res/ico/FluentMaximize16Regular.png</file>
+        <file>res/ico/IconamoonClose.png</file>
+        <file>res/ico/MingcuteMinimizeLine.png</file>
+        <file>res/ico/SiWarningFill.png</file>
+        <file>res/ico/MaterialSymbolsArrowBackRounded.png</file>
+        <file>res/ico/register_image_1.png</file>
+        <file>res/ico/add.png</file>
+        <file>res/ico/notice.png</file>
+        <file>res/ico/agree.png</file>
+        <file>res/ico/Busy.png</file>
+        <file>res/ico/refuse.png</file>
+        <file>res/ico/MingcuteMessage1Line.png</file>
+        <file>res/ico/MingcuteMessage1Line_sel.png</file>
+        <file>res/ico/man.png</file>
+        <file>res/ico/woman.png</file>
+        <file>res/ico/email.png</file>
+        <file>res/ico/phone.png</file>
+        <file>res/ico/file.png</file>
+        <file>res/ico/picture.png</file>
+        <file>res/ico/exe.png</file>
+        <file>res/ico/correct.png</file>
+    </qresource>
+    <qresource prefix="/js">
+        <file>WorkerScript.js</file>
+    </qresource>
+    <qresource prefix="/sound">
+        <file>res/sound/charge_wireless.ogg</file>
+    </qresource>
+</RCC>
