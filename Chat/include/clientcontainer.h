@@ -96,6 +96,7 @@ signals:
     void downloadFinishedForPicture(const QString &fileName, int index);
     void uploadFileForFile(const QString &fileName, int index);
     void uploadFileForPicture(const QString &fileName, int index);
+    void receivedGroupInvitedSignal(const QJsonArray &members, const QJsonObject &groupInfo);
 
 private:
     void ReadData();

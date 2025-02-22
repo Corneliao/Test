@@ -243,6 +243,7 @@ void ClientWork::createGroupChat(const QJsonObject &sender, const QVariant &rece
     for (int i = 0; i < arrayList.size(); i++) {
         array.append(arrayList[i].toJsonObject());
     }
+    array.append(sender);
 
     QJsonObject object;
     object.insert("type", "createGroupChat");
@@ -322,6 +323,12 @@ void ClientWork::ReadData() {
             QString messageType = object["messageType"].toString();
 
             emit this->receivedFileSignal(senderData, fileInfo, messageType);
+        } else if (type == "receivedGroupInvite") {
+            QJsonObject adminData = object["admin"].toObject();
+            Q_UNUSED(adminData);
+            QJsonArray array = object["members"].toArray();
+            QJsonObject groupInfo = object["groupInfo"].toObject();
+            emit this->receivedGroupInvitedSignal(array, groupInfo);
         }
     }
 }
