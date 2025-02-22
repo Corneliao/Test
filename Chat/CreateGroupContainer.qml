@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Controls.Material
+import QtQuick.Layouts
 
 Popup {
     anchors.centerIn: parent
@@ -13,5 +14,12 @@ Popup {
     contentItem: Rectangle {
         radius: 10
         color: Qt.color("#b14347")
+
+        ColumnLayout {
+            anchors.fill: parent
+            Rectangle {
+
+            }
+        }
     }
 }
