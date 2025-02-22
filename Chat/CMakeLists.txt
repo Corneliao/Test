@@ -50,6 +50,7 @@ qt_add_qml_module(appChat
         CustomProgressBar.qml
         FileMessageItem.qml
         PictureMessageItem.qml
+        CreateGroupContainer.qml
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

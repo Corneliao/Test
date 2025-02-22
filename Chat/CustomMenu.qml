@@ -3,6 +3,7 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 
 Menu {
+
     width: 140
     height: 120
     padding: 2
@@ -38,6 +39,13 @@ Menu {
                 anchors.centerIn: parent
                 font.pixelSize: 13
                 color: Qt.color("white")
+            }
+        }
+        MouseArea {
+            anchors.fill: parent
+            onClicked: {
+                add_popup.close()
+                mainWindow.createGroupComponent.open()
             }
         }
     }

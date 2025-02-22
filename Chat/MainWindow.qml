@@ -11,6 +11,7 @@ FramelessWindow {
     property string userAccount
     property var noticeComponent: notice
     property var featureBarComponent: featurbar_
+    property var createGroupComponent: group_
     Component.onCompleted: {
         mainWindow.moveCenter()
         mainWindow.setWindowTitleBar(title_bar)
@@ -21,6 +22,13 @@ FramelessWindow {
         x: mainWindow.width - width - 20
         y: 15
     }
+
+    CreateGroupContainer {
+        id: group_
+        width: 400
+        height: 400
+    }
+
     RowLayout {
         function adjustWindowMargins(left_margin, top_margin, right_margin, bottom_margin) {
             anchors.leftMargin = left_margin
