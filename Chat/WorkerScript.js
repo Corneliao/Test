@@ -50,6 +50,7 @@ WorkerScript.onMessage = function func(message) {
         model.sync()
     } else if (type === "increateMessage") {
         var usermessage = message.message
+        var item_type = message.itemType
         for (var j = 0; j < model.count; j++) {
             let _account = model.get(j).messageData.account
             if (json.account === _account) {
@@ -59,7 +60,8 @@ WorkerScript.onMessage = function func(message) {
         json.message = usermessage
         model.append({
                          "messageData": json,
-                         "unreadCount": 0
+                         "unreadCount": 0,
+                         "itemType": item_type
                      })
         model.sync()
         WorkerScript.sendMessage({

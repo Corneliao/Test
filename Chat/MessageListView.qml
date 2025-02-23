@@ -124,6 +124,7 @@ Item {
                 required property var messageData
                 required property var index
                 required property var unreadCount
+                required property string itemType
                 property color bkColor: Qt.rgba(0 / 255, 0 / 255,
                                                 0 / 255, 20 / 255)
                 width: ListView.view.width
@@ -135,9 +136,11 @@ Item {
                                                     "transparent")
                 Image {
                     id: user_head
-                    source: Qt.url(
-                                "image://async/http://127.0.0.1:9005/userhead/"
-                                + message_item.messageData.account + ".jpg")
+                    source: itemType
+                            === "user" ? Qt.url(
+                                             "image://async/http://127.0.0.1:9005/userhead/"
+                                             + message_item.messageData.account + ".jpg") : Qt.url(
+                                             "image://async/http://127.0.0.1:9005/userhead/GoupHead.png")
                     width: 50
                     height: 50
                     sourceSize: Qt.size(55, 55)
