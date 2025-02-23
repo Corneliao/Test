@@ -127,6 +127,7 @@ public:
     Q_INVOKABLE void downloadFile(int index, const QString &fileName, const QString &messageType);
     Q_INVOKABLE void createGroupChat(const QJsonObject &sender, const QVariant &receivers, const QString &groupName);
     Q_INVOKABLE QSize getPictureSize(const QString &filepath);
+
 signals:
     void loginSignal(const QJsonObject &json, bool login);
     void userInfoSignal(const QByteArray &data);
@@ -141,6 +142,7 @@ signals:
     void downloadFinishedForPicture(const QString &fileName, int index);
     void uploadFileForFile(const QString &fileName, int index);
     void uploadFileForPicture(const QString &fileName, int index);
+    void receivedGroupInvitedSignal(const QJsonArray &members, const QJsonObject &groupInfo);
 
 private:
     ClientWork *m_clientwork = nullptr;

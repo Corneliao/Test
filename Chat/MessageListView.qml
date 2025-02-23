@@ -10,12 +10,13 @@ Item {
 
     signal currentIndexChanged(int index)
 
-    function createMessage(jsonData, message) {
+    function createMessage(jsonData, message, type) {
         historyMessage_script.sendMessage({
                                               "type": "increateMessage",
                                               "value": jsonData,
                                               "model": message_model,
-                                              "message": message
+                                              "message": message,
+                                              "itemType": type
                                           })
     }
 

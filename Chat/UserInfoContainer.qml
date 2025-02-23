@@ -6,13 +6,15 @@ Item {
     id: userinfo
 
     property var jsonData
+    property string type
 
-    signal sendMessage(var jsonData)
+    signal sendMessage(var jsonData, string type)
 
-    function showInfo(data) {
+    function showInfo(data, type) {
         if (stacklayout.children.length === 1) {
             let obj = info___.createObject(stacklayout, {
-                                               "jsonData": data
+                                               "jsonData": data,
+                                               "type": type
                                            })
             stacklayout.currentIndex = 1
         } else {
@@ -43,7 +45,7 @@ Item {
         Rectangle {
             id: info_page
             property var jsonData
-
+            property string type
             Layout.fillHeight: true
             Layout.fillWidth: true
             color: Qt.color("transparent")
@@ -62,9 +64,11 @@ Item {
 
                     Image {
                         id: head
-                        source: Qt.url(
-                                    "image://async/http://127.0.0.1:9005/userhead/"
-                                    + info_page.jsonData.account + ".jpg")
+                        source: type
+                                === "user" ? Qt.url(
+                                                 "image://async/http://127.0.0.1:9005/userhead/"
+                                                 + info_page.jsonData.account + ".jpg") : Qt.url(
+                                                 "image://async/http://127.0.0.1:9005/userhead/GroupHead.png")
                         width: 70
                         height: 70
                         sourceSize: Qt.size(70, 70)
@@ -92,6 +96,7 @@ Item {
                                 === "男" ? Qt.url(
                                               "qrc:/res/ico/man.png") : Qt.url(
                                               "qrc:/res/ico/woman.png")
+                        visible: type === "user" ? true : false
                         width: 15
                         height: 15
                         anchors {
@@ -102,7 +107,8 @@ Item {
                     }
 
                     Label {
-                        text: "账号：" + (info_page.jsonData.account)
+                        text: type === "user" ? "账号：" + (info_page.jsonData.account) : "群号："
+                                                + info_page.jsonData.groupInfo.groupID
                         font.pixelSize: 11
                         color: Qt.color("white")
                         anchors {
@@ -174,7 +180,8 @@ Item {
                                 cursorShape = Qt.PointingHandCursor
                             }
                             onClicked: {
-                                userinfo.sendMessage(info_page.jsonData)
+                                userinfo.sendMessage(info_page.jsonData,
+                                                     info_page.type)
                             }
                         }
                     }

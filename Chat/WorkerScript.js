@@ -36,13 +36,15 @@ WorkerScript.onMessage = function func(message) {
         model.sync()
     } else if (type === "updateFriend") {
         model.append({
-                         "friendData": json
+                         "friendData": json,
+                         "type": "user"
                      })
         model.sync()
     } else if (type === "friendData") {
         for (var i = 0; i < json.length; i++) {
             model.append({
-                             "friendData": json[i]
+                             "friendData": json[i],
+                             "type": "user"
                          })
         }
         model.sync()
@@ -95,6 +97,12 @@ WorkerScript.onMessage = function func(message) {
         countUnreadCount(message)
     } else if (type === "receivedFile") {
         receivedFile(message)
+    } else if (type === "receivedGroupInvited") {
+        model.append({
+                         "friendData": json,
+                         "type": "Group"
+                     })
+        model.sync()
     }
 }
 

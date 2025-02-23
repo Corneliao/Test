@@ -365,6 +365,7 @@ void ClientContainer::connectServer() {
     connect(this->m_clientwork, &ClientWork::downloadFinishedForPicture, this, &ClientContainer::downloadFinishedForPicture, Qt::QueuedConnection);
     connect(this->m_clientwork, &ClientWork::uploadFileForFile, this, &ClientContainer::uploadFileForFile, Qt::QueuedConnection);
     connect(this->m_clientwork, &ClientWork::uploadFileForPicture, this, &ClientContainer::uploadFileForPicture, Qt::QueuedConnection);
+    connect(this->m_clientwork, &ClientWork::receivedGroupInvitedSignal, this, &ClientContainer::receivedGroupInvitedSignal, Qt::QueuedConnection);
     this->m_thread->start();
 }
 

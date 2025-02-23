@@ -52,6 +52,7 @@ qt_add_qml_module(appChat
         PictureMessageItem.qml
         CreateGroupContainer.qml
         CustomSearchBar.qml
+        work_2.js
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

@@ -6,7 +6,7 @@ Item {
     id: friendContainer
     property var infoContainer: info_container
 
-    signal createMessageSignal(var jsonData)
+    signal createMessageSignal(var jsonData, string type)
 
     RowLayout {
         anchors.fill: parent
@@ -19,8 +19,8 @@ Item {
             id: info_container
             Layout.fillHeight: true
             Layout.fillWidth: true
-            onSendMessage: data => {
-                               friendContainer.createMessageSignal(data)
+            onSendMessage: (data, type) => {
+                               friendContainer.createMessageSignal(data, type)
                            }
         }
     }

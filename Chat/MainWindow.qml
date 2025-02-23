@@ -72,9 +72,9 @@ FramelessWindow {
                 MyFriendContainer {
                     Layout.preferredHeight: parent.height
                     Layout.preferredWidth: parent.width
-                    onCreateMessageSignal: data => {
+                    onCreateMessageSignal: (data, type) => {
                                                messageContainer.hostoryMessageView.createMessage(
-                                                   data, "")
+                                                   data, "", type)
                                                stacklayout.currentIndex = 0
                                                featurbar_.setCurrentIndex(0)
                                                messageContainer.createChatWindow(
