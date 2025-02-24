@@ -42,7 +42,6 @@ WorkerScript.onMessage = function func(message) {
         model.sync()
     } else if (type === "friendData") {
         for (var i = 0; i < json.length; i++) {
-            console.log(json[i].type)
             model.append({
                              "friendData": json[i]
                          })
@@ -50,7 +49,6 @@ WorkerScript.onMessage = function func(message) {
         model.sync()
     } else if (type === "increateMessage") {
         var usermessage = message.message
-        var item_type = message.itemType
         for (var j = 0; j < model.count; j++) {
             let _account = model.get(j).messageData.account
             if (json.account === _account) {
@@ -60,8 +58,7 @@ WorkerScript.onMessage = function func(message) {
         json.message = usermessage
         model.append({
                          "messageData": json,
-                         "unreadCount": 0,
-                         "itemType": item_type
+                         "unreadCount": 0
                      })
         model.sync()
         WorkerScript.sendMessage({
@@ -101,9 +98,11 @@ WorkerScript.onMessage = function func(message) {
     } else if (type === "receivedFile") {
         receivedFile(message)
     } else if (type === "receivedGroupInvited") {
+        var group = json.groupInfo
+        var members = json.members
+        group.members = members
         model.append({
-                         "friendData": json
-                         //"type": "Group"
+                         "friendData": group
                      })
         model.sync()
     }

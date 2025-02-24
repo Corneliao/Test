@@ -177,6 +177,17 @@ void UserDatabaseManager::selectUserFriend(const QString &account) {
                                 object.insert("groupName", group_name);
                                 object.insert("groupID", groupid);
                                 object.insert("type", "Group");
+
+                                QJsonArray groupMembers;
+                                QSqlQuery query_members(db);
+                                query_members.prepare("select user_id from group_member where group_id = " + groupid);
+                                if (query_members.exec()) {
+                                    while (query_members.next()) {
+                                        QString user_id = query_members.value(0).toString();
+                                        groupMembers.append(user_id);
+                                    }
+                                    object.insert("members", groupMembers);
+                                }
                                 array.append(object);
                             }
                         }

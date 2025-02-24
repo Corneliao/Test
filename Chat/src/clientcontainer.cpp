@@ -258,6 +258,33 @@ void ClientWork::createGroupChat(const QJsonObject &sender, const QVariant &rece
     this->m_socket->flush();
 }
 
+void ClientWork::sendGroupMessage(const QJsonObject &groupInfo, const QJsonObject &senderData, const QString &message) {
+    QJsonObject group_info = groupInfo;
+    group_info.remove("members");
+    QString sender_account = senderData["account"].toString();
+
+    QJsonArray member = groupInfo["members"].toArray();
+
+    for (int i = 0; i < groupInfo["members"].toArray().count(); i++) {
+        if (groupInfo["members"].toArray()[i].toString() == sender_account) {
+            member.removeAt(i);
+            break;
+        }
+    }
+
+    QJsonObject object;
+    object.insert("type", "sendGroupMessage");
+    object.insert("groupInfo", group_info);
+    object.insert("members", member);
+    object.insert("message", message);
+    object.insert("senderData", senderData);
+
+    QJsonDocument doc(object);
+    QByteArray data = doc.toJson(QJsonDocument::Compact);
+    this->m_socket->write(data);
+    this->m_socket->flush();
+}
+
 void ClientWork::ReadData() {
     QByteArray data = this->m_socket->readAll();
 
@@ -269,6 +296,7 @@ void ClientWork::ReadData() {
         if (QString type = object["type"].toString(); type == "loginVerify") {
             bool state = object["state"].toBool();
             if (state) {
+                object["type"] = "user";
                 emit this->loginSignal(object, state);
             } else {
                 emit this->loginSignal(QJsonObject(), state);
@@ -311,7 +339,6 @@ void ClientWork::ReadData() {
             emit this->updateFriendListSignal(userData);
         } else if (type == "friendData") {
             QJsonArray userData = object["userData"].toArray();
-            qDebug() << userData;
             emit this->friendsData(userData);
         } else if (type == "receivedMessage") {
             QJsonObject sender = object["senderData"].toObject();
@@ -429,4 +456,8 @@ QSize ClientContainer::getPictureSize(const QString &filepath) {
         return pixmap.size();
     }
     return {};
+}
+
+void ClientContainer::sendGroupMessage(const QJsonObject &groupInfo, const QJsonObject &senderData, const QString &message) {
+    QMetaObject::invokeMethod(this->m_clientwork, "sendGroupMessage", Qt::QueuedConnection, Q_ARG(QJsonObject, groupInfo), Q_ARG(QJsonObject, senderData), Q_ARG(QString, message));
 }

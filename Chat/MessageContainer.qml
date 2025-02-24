@@ -52,6 +52,7 @@ Item {
 
     //当第一次接受到好友消息时创建聊天窗口
     function createChatWindowReceived(senderData, message, messageType) {
+
         let comp = Qt.createComponent("ChatWindow.qml", chatwindow_stacklayout)
         if (comp.status === Component.Ready) {
             let obj = comp.createObject(chatwindow_stacklayout, {

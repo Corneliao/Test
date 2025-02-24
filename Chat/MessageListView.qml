@@ -15,8 +15,7 @@ Item {
                                               "type": "increateMessage",
                                               "value": jsonData,
                                               "model": message_model,
-                                              "message": message,
-                                              "itemType": type
+                                              "message": message
                                           })
     }
 
@@ -124,7 +123,6 @@ Item {
                 required property var messageData
                 required property var index
                 required property var unreadCount
-                required property string itemType
 
                 property color bkColor: Qt.rgba(0 / 255, 0 / 255,
                                                 0 / 255, 20 / 255)
@@ -137,7 +135,7 @@ Item {
                                                     "transparent")
                 Image {
                     id: user_head
-                    source: itemType
+                    source: messageData.type
                             === "user" ? Qt.url(
                                              "image://async/http://127.0.0.1:9005/userhead/"
                                              + message_item.messageData.account + ".jpg") : Qt.url(
@@ -154,7 +152,7 @@ Item {
 
                 Label {
                     id: user_name
-                    text: itemType === "user" ? message_item.messageData.name : message_item.messageData.groupName
+                    text: messageData.type === "user" ? message_item.messageData.name : message_item.messageData.groupName
                     font.pixelSize: 13
                     font.bold: true
                     color: "white"
@@ -167,7 +165,7 @@ Item {
                 }
                 Label {
                     id: user_message
-                    text: itemType === "user" ? messageData.message : ""
+                    text: messageData.type === "user" ? messageData.message : ""
                     font.pixelSize: 11
                     color: Qt.rgba(255 / 255, 255 / 255, 255 / 255, 200 / 255)
                     anchors {

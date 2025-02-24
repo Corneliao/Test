@@ -127,6 +127,12 @@ void ClientWork::ReadClientMessage() {
             QJsonArray members = object["members"].toArray();
             QJsonObject groupInfo = object["groupInfo"].toObject();
             QMetaObject::invokeMethod(this->database_manager, "createGroupChat", Qt::QueuedConnection, Q_ARG(QJsonObject, senderData), Q_ARG(QJsonArray, members), Q_ARG(QJsonObject, groupInfo));
+        } else if (type == "sendGroupMessage") {
+            QJsonObject groupInfo = object.value("groupInfo").toObject();
+            QJsonArray members = object["members"].toArray();
+            QJsonObject senderData = object["senderData"].toObject();
+            QString message = object["message"].toString();
+            emit this->sendGroupMessageSignal(groupInfo, members, senderData, message);
         }
     }
 }
@@ -179,7 +185,6 @@ void ClientWork::sendFile(const QJsonObject &senderData, const QJsonObject &file
 }
 
 void ClientWork::receivedGroupNotification(const QJsonObject &senderData, const QJsonArray &members, const QJsonObject &groupInfo) {
-    qDebug() << "收到傲晴";
     QJsonObject object;
     object.insert("type", "receivedGroupInvite");
     object.insert("admin", senderData);
@@ -188,6 +193,19 @@ void ClientWork::receivedGroupNotification(const QJsonObject &senderData, const 
 
     QJsonDocument doc(object);
     QByteArray data = doc.toJson(QJsonDocument::Compact);
+    this->m_socket->write(data);
+    this->m_socket->flush();
+}
+
+void ClientWork::sendGroupMessage(const QJsonObject &groupInfo, const QJsonObject &senderData, const QString &message) {
+    QJsonObject object;
+    object.insert("type", "receivedGroupMessage");
+    object.insert("senderData", senderData);
+    object.insert("groupInfo", groupInfo);
+    object.insert("mesasge", message);
+
+    QJsonDocument doc(object);
+    QByteArray data = doc.toJson();
     this->m_socket->write(data);
     this->m_socket->flush();
 }

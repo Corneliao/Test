@@ -35,6 +35,7 @@ Item {
                     size = Client.getPictureSize(fileInfoData.filePath)
                 } else if (root.state_type === "recv") {
                     size = Client.getPictureSize(fileInfoData.fileName)
+                    console.log(size)
                 }
 
                 if (size.width === size.height) {

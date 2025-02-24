@@ -94,14 +94,12 @@ Item {
 
                        if (messageObject.type === "recvFinished"
                            && messageObject.messageType === "File") {
-                           console.log("接收到文件")
                            Client.downloadFile(messageView.count - 1,
                                                messageObject.fileName,
                                                messageObject.messageType)
                        }
                        if (messageObject.type === "recvFinished"
                            && messageObject.messageType === "Picture") {
-                           console.log("接收到文件")
                            Client.downloadFile(messageView.count - 1,
                                                messageObject.fileName,
                                                messageObject.messageType)
@@ -110,6 +108,7 @@ Item {
     }
 
     function increateReceiveMessage(senderData, message, messageType) {
+        console.log(senderData)
         chatwindow_script.sendMessage({
                                           "type": "receivedMessage",
                                           "value": senderData,
@@ -235,12 +234,25 @@ Item {
                                                           "model": message_item_model,
                                                           "messageType": "Text"
                                                       })
-                        Client.sendMessage(Global.myJsonData,
-                                           chat_window.friendJsonData.account,
-                                           message_input.text, "Text")
-                        chat_window.sendMessageSignal(
-                                    chat_window.friendJsonData.account,
-                                    message_input.text, "Text")
+
+                        if (chat_window.friendJsonData.type === "user") {
+
+                            //发送个人消息
+                            Client.sendMessage(
+                                        Global.myJsonData,
+                                        chat_window.friendJsonData.account,
+                                        message_input.text, "Text")
+                            chat_window.sendMessageSignal(
+                                        chat_window.friendJsonData.account,
+                                        message_input.text, "Text")
+
+                            //发送群聊消息
+                        } else if (chat_window.friendJsonData.type === "Group") {
+                            Client.sendGroupMessage(chat_window.friendJsonData,
+                                                    Global.myJsonData,
+                                                    message_input.text)
+                        }
+
                         message_input.clear()
                     }
                 }
