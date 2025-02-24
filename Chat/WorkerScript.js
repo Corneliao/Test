@@ -42,9 +42,9 @@ WorkerScript.onMessage = function func(message) {
         model.sync()
     } else if (type === "friendData") {
         for (var i = 0; i < json.length; i++) {
+            console.log(json[i].type)
             model.append({
-                             "friendData": json[i],
-                             "type": "user"
+                             "friendData": json[i]
                          })
         }
         model.sync()
@@ -74,6 +74,7 @@ WorkerScript.onMessage = function func(message) {
     } else if (type === "addFriendData") {
         model.append({
                          "friendData": json
+                         // "type": "user"
                      })
         model.sync()
     } else if (type === "updateMessage") {
@@ -92,7 +93,7 @@ WorkerScript.onMessage = function func(message) {
         }
 
         WorkerScript.sendMessage({
-                                     "type": "totolUnreadCount",
+                                     "type": "UnreadCount",
                                      "count": count_
                                  })
     } else if (type === "countUnreadCount") {
@@ -101,8 +102,8 @@ WorkerScript.onMessage = function func(message) {
         receivedFile(message)
     } else if (type === "receivedGroupInvited") {
         model.append({
-                         "friendData": json,
-                         "type": "Group"
+                         "friendData": json
+                         //"type": "Group"
                      })
         model.sync()
     }
@@ -243,7 +244,7 @@ function countUnreadCount(message) {
     }
 
     WorkerScript.sendMessage({
-                                 "type": "totolUnreadCount",
+                                 "type": "UnreadCount",
                                  "count": count_
                              })
 }

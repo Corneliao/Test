@@ -59,7 +59,7 @@ Item {
                                         })
             obj.receivedMessageSignal.connect(increateUnreadMessageCount)
             obj.sendMessageSignal.connect(sendMessageSignal)
-            hostoryMessageListView.createMessage(senderData, message)
+            hostoryMessageListView.createMessage(senderData, message, "user")
             obj.increateReceiveMessage(senderData, message, messageType)
         }
     }
@@ -73,7 +73,8 @@ Item {
                                         })
             obj.receivedMessageSignal.connect(increateUnreadMessageCount)
             obj.sendMessageSignal.connect(sendMessageSignal)
-            hostoryMessageListView.createMessage(senderData, fileInfo.fileName)
+            hostoryMessageListView.createMessage(senderData,
+                                                 fileInfo.fileName, "user")
             obj.increateReceiveFile(senderData, fileInfo, messageType)
         }
     }

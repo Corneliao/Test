@@ -43,11 +43,11 @@ Popup {
                         property bool isChecked: check_box.checkState
                         required property int index
                         required property var friendData
+                        visible: friendData.type === "user" ? true : false
                         color: Qt.rgba(0 / 255, 0 / 255, 0 / 255, 100 / 255)
                         width: 200
                         height: 80
                         radius: 10
-
                         RowLayout {
                             anchors.fill: parent
                             spacing: 10
@@ -58,14 +58,13 @@ Popup {
                                 id: user_head
                                 Layout.preferredHeight: 50
                                 Layout.preferredWidth: 50
-                                source: Qt.url(
-                                            "image://async/http://127.0.0.1:9005/userhead/"
-                                            + friendData.account + ".jpg")
+                                source: friendData.type === "user" ? Qt.url(
+                                                                         "image://async/http://127.0.0.1:9005/userhead/" + friendData.account + ".jpg") : ""
                                 sourceSize: Qt.size(50, 50)
                             }
                             Label {
                                 id: user_name
-                                text: friendData.name
+                                text: friendData.type === "user" ? friendData.name : ""
                                 color: Qt.color("white")
                                 font.bold: true
                             }

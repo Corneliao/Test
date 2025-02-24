@@ -77,7 +77,10 @@ void MinioManager::run() {
         QScopedPointer<QNetworkAccessManager> manager(new QNetworkAccessManager);
 
         QNetworkReply *reply = manager.data()->get(QNetworkRequest(QUrl("http://127.0.0.1:9005/file/" + this->_path)));
-        connect(reply, &QNetworkReply::downloadProgress, this, [=](qint64 loadSize, qint64 totalSize) { emit this->downloadProgress(loadSize * 1.0 / totalSize); });
+        connect(reply, &QNetworkReply::downloadProgress, this, [=](qint64 loadSize, qint64 totalSize) {
+            qDebug() << __FUNCTION__ << loadSize * 1.0 / totalSize;
+            emit this->downloadProgress(loadSize * 1.0 / totalSize);
+        });
 
         connect(reply, &QNetworkReply::finished, this, [=]() {
             if (reply->error() == QNetworkReply::NoError) {

@@ -27,8 +27,11 @@ Rectangle {
             }
         }
         function onDownloadFileProgress(pos, index) {
+            console.log(pos)
+
             if (index === file_message_item.index) {
                 progress_bar.value = pos
+                console.log(pos)
             }
         }
     }

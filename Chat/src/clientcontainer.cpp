@@ -311,6 +311,7 @@ void ClientWork::ReadData() {
             emit this->updateFriendListSignal(userData);
         } else if (type == "friendData") {
             QJsonArray userData = object["userData"].toArray();
+            qDebug() << userData;
             emit this->friendsData(userData);
         } else if (type == "receivedMessage") {
             QJsonObject sender = object["senderData"].toObject();

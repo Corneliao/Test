@@ -92,9 +92,16 @@ Item {
                                messageObject.fileName, "File")
                        }
 
-                       if ((messageObject.type === "recvFinished")
-                           && (messageObject.messageType === "file"
-                               || messageObject.messageType === "Picture")) {
+                       if (messageObject.type === "recvFinished"
+                           && messageObject.messageType === "File") {
+                           console.log("接收到文件")
+                           Client.downloadFile(messageView.count - 1,
+                                               messageObject.fileName,
+                                               messageObject.messageType)
+                       }
+                       if (messageObject.type === "recvFinished"
+                           && messageObject.messageType === "Picture") {
+                           console.log("接收到文件")
                            Client.downloadFile(messageView.count - 1,
                                                messageObject.fileName,
                                                messageObject.messageType)
@@ -139,15 +146,18 @@ Item {
                     verticalCenter: parent.verticalCenter
                     leftMargin: 8
                 }
-                source: Qt.url("image://async/http://127.0.0.1:9005/userhead/"
-                               + chat_window.friendJsonData.account + ".jpg")
+                source: chat_window.friendJsonData.type
+                        === "user" ? Qt.url(
+                                         "image://async/http://127.0.0.1:9005/userhead/"
+                                         + chat_window.friendJsonData.account + ".jpg") : Qt.url(
+                                         "image://async/http://127.0.0.1:9005/userhead/GroupHead.png")
                 Layout.preferredHeight: parent.height - 15
                 Layout.preferredWidth: parent.height - 15
                 sourceSize: Qt.size(parent.height - 15, parent.height - 15)
             }
             Label {
                 id: user_name
-                text: chat_window.friendJsonData.name
+                text: friendJsonData.type === "user" ? chat_window.friendJsonData.name : chat_window.friendJsonData.groupName
                 font.pixelSize: 13
                 color: Qt.color("white")
                 font.bold: true

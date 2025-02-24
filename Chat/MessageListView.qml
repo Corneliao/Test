@@ -125,6 +125,7 @@ Item {
                 required property var index
                 required property var unreadCount
                 required property string itemType
+
                 property color bkColor: Qt.rgba(0 / 255, 0 / 255,
                                                 0 / 255, 20 / 255)
                 width: ListView.view.width
@@ -140,7 +141,7 @@ Item {
                             === "user" ? Qt.url(
                                              "image://async/http://127.0.0.1:9005/userhead/"
                                              + message_item.messageData.account + ".jpg") : Qt.url(
-                                             "image://async/http://127.0.0.1:9005/userhead/GoupHead.png")
+                                             "image://async/http://127.0.0.1:9005/userhead/GroupHead.png")
                     width: 50
                     height: 50
                     sourceSize: Qt.size(55, 55)
@@ -153,7 +154,7 @@ Item {
 
                 Label {
                     id: user_name
-                    text: message_item.messageData.name
+                    text: itemType === "user" ? message_item.messageData.name : message_item.messageData.groupName
                     font.pixelSize: 13
                     font.bold: true
                     color: "white"
@@ -166,7 +167,7 @@ Item {
                 }
                 Label {
                     id: user_message
-                    text: messageData.message
+                    text: itemType === "user" ? messageData.message : ""
                     font.pixelSize: 11
                     color: Qt.rgba(255 / 255, 255 / 255, 255 / 255, 200 / 255)
                     anchors {

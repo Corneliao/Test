@@ -6,20 +6,19 @@ Item {
     id: userinfo
 
     property var jsonData
-    property string type
 
     signal sendMessage(var jsonData, string type)
 
     function showInfo(data, type) {
         if (stacklayout.children.length === 1) {
             let obj = info___.createObject(stacklayout, {
-                                               "jsonData": data,
-                                               "type": type
+                                               "jsonData": data
                                            })
             stacklayout.currentIndex = 1
         } else {
             let item = stacklayout.children[1]
             item.jsonData = data
+            item.type = type
         }
     }
 
@@ -64,7 +63,7 @@ Item {
 
                     Image {
                         id: head
-                        source: type
+                        source: jsonData.type
                                 === "user" ? Qt.url(
                                                  "image://async/http://127.0.0.1:9005/userhead/"
                                                  + info_page.jsonData.account + ".jpg") : Qt.url(
@@ -79,7 +78,8 @@ Item {
                     }
                     Label {
                         id: name
-                        text: info_page.jsonData.name === undefined ? "" : jsonData.name
+                        text: jsonData.type
+                              === "user" ? info_page.jsonData.name : info_page.jsonData.groupName
                         font.bold: true
                         font.pixelSize: 15
                         color: Qt.color("white")
@@ -92,11 +92,12 @@ Item {
                     }
 
                     Image {
-                        source: info_page.jsonData.gender
-                                === "男" ? Qt.url(
-                                              "qrc:/res/ico/man.png") : Qt.url(
-                                              "qrc:/res/ico/woman.png")
-                        visible: type === "user" ? true : false
+                        source: jsonData.type
+                                === "user" ? (info_page.jsonData.gender
+                                              === "男" ? Qt.url(
+                                                            "qrc:/res/ico/man.png") : Qt.url(
+                                                            "qrc:/res/ico/woman.png")) : ""
+                        visible: jsonData.type === "user" ? true : false
                         width: 15
                         height: 15
                         anchors {
@@ -107,8 +108,9 @@ Item {
                     }
 
                     Label {
-                        text: type === "user" ? "账号：" + (info_page.jsonData.account) : "群号："
-                                                + info_page.jsonData.groupInfo.groupID
+                        text: jsonData.type
+                              === "user" ? "账号：" + (info_page.jsonData.account) : "群号："
+                                           + info_page.jsonData.groupID
                         font.pixelSize: 11
                         color: Qt.color("white")
                         anchors {
@@ -128,12 +130,13 @@ Item {
                         }
 
                         Image {
-                            source: Qt.url("qrc:/res/ico/email.png")
+                            source: jsonData.type === "user" ? Qt.url(
+                                                                   "qrc:/res/ico/email.png") : ""
                             Layout.preferredHeight: 30
                             Layout.preferredWidth: 30
                         }
                         Label {
-                            text: info_page.jsonData.email
+                            text: jsonData.type === "user" ? info_page.jsonData.email : ""
                             color: Qt.color("white")
                         }
                     }
@@ -147,12 +150,13 @@ Item {
                         }
 
                         Image {
-                            source: Qt.url("qrc:/res/ico/phone.png")
+                            source: jsonData.type === "user" ? Qt.url(
+                                                                   "qrc:/res/ico/phone.png") : ""
                             Layout.preferredHeight: 30
                             Layout.preferredWidth: 30
                         }
                         Label {
-                            text: info_page.jsonData.phone
+                            text: jsonData.type === "user" ? info_page.jsonData.phone : ""
                             color: Qt.color("white")
                         }
                     }

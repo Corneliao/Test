@@ -148,7 +148,6 @@ Item {
                 id: friend_item
                 required property var friendData
                 required property int index
-                required property string type
                 width: ListView.view.width
                 height: 80
                 color: ListView.isCurrentItem ? Qt.rgba(0 / 255,
@@ -159,11 +158,11 @@ Item {
 
                 Image {
                     id: user_head
-                    source: type === "user" ? Qt.url(
-                                                  "image://async/http://127.0.0.1:9005/userhead/"
-                                                  + friend_item.friendData.account
-                                                  + ".jpg") : Qt.url(
-                                                  "image://async/http://127.0.0.1:9005/userhead/GroupHead.png")
+                    source: friendData.type
+                            === "user" ? Qt.url(
+                                             "image://async/http://127.0.0.1:9005/userhead/"
+                                             + friend_item.friendData.account + ".jpg") : Qt.url(
+                                             "image://async/http://127.0.0.1:9005/userhead/GroupHead.png")
                     width: 50
                     height: 50
                     anchors {
@@ -177,7 +176,7 @@ Item {
                     font.pixelSize: 13
                     font.bold: true
                     color: Qt.color("white")
-                    text: type === "user" ? friend_item.friendData.name : friend_item.friendData.groupInfo.groupName
+                    text: friendData.type === "user" ? friend_item.friendData.name : friend_item.friendData.groupName
                     anchors {
                         left: user_head.right
                         leftMargin: 15
@@ -201,7 +200,8 @@ Item {
                         friend_item.color = Qt.rgba(0 / 255, 0 / 255,
                                                     0 / 255, 20 / 255)
                         friendContainer.infoContainer.showInfo(
-                                    friend_item.friendData, friend_item.type)
+                                    friend_item.friendData,
+                                    friend_item.friendData.type)
                     }
                 }
             }
