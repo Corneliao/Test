@@ -198,11 +198,13 @@ void ClientWork::receivedGroupNotification(const QJsonObject &senderData, const 
 }
 
 void ClientWork::sendGroupMessage(const QJsonObject &groupInfo, const QJsonObject &senderData, const QString &message) {
+    qDebug() << "发送群聊消息" << senderData["account"].toString();
+
     QJsonObject object;
     object.insert("type", "receivedGroupMessage");
     object.insert("senderData", senderData);
     object.insert("groupInfo", groupInfo);
-    object.insert("mesasge", message);
+    object.insert("message", message);
 
     QJsonDocument doc(object);
     QByteArray data = doc.toJson();

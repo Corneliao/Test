@@ -259,14 +259,12 @@ void ClientWork::createGroupChat(const QJsonObject &sender, const QVariant &rece
 }
 
 void ClientWork::sendGroupMessage(const QJsonObject &groupInfo, const QJsonObject &senderData, const QString &message) {
-    QJsonObject group_info = groupInfo;
-    group_info.remove("members");
     QString sender_account = senderData["account"].toString();
 
     QJsonArray member = groupInfo["members"].toArray();
 
-    for (int i = 0; i < groupInfo["members"].toArray().count(); i++) {
-        if (groupInfo["members"].toArray()[i].toString() == sender_account) {
+    for (int i = 0; i < member.count(); i++) {
+        if (member[i].toString() == sender_account) {
             member.removeAt(i);
             break;
         }
@@ -274,7 +272,7 @@ void ClientWork::sendGroupMessage(const QJsonObject &groupInfo, const QJsonObjec
 
     QJsonObject object;
     object.insert("type", "sendGroupMessage");
-    object.insert("groupInfo", group_info);
+    object.insert("groupInfo", groupInfo);
     object.insert("members", member);
     object.insert("message", message);
     object.insert("senderData", senderData);
@@ -357,6 +355,11 @@ void ClientWork::ReadData() {
             QJsonArray array = object["members"].toArray();
             QJsonObject groupInfo = object["groupInfo"].toObject();
             emit this->receivedGroupInvitedSignal(array, groupInfo);
+        } else if (type == "receivedGroupMessage") {
+            QJsonObject senderData = object["senderData"].toObject();
+            QJsonObject groupInfo = object["groupInfo"].toObject();
+            QString message = object["message"].toString();
+            emit this->receiveGroupMessage(groupInfo, senderData, message);
         }
     }
 }
@@ -394,6 +397,7 @@ void ClientContainer::connectServer() {
     connect(this->m_clientwork, &ClientWork::uploadFileForFile, this, &ClientContainer::uploadFileForFile, Qt::QueuedConnection);
     connect(this->m_clientwork, &ClientWork::uploadFileForPicture, this, &ClientContainer::uploadFileForPicture, Qt::QueuedConnection);
     connect(this->m_clientwork, &ClientWork::receivedGroupInvitedSignal, this, &ClientContainer::receivedGroupInvitedSignal, Qt::QueuedConnection);
+    connect(this->m_clientwork, &ClientWork::receiveGroupMessage, this, &ClientContainer::receiveGroupMessage, Qt::QueuedConnection);
     this->m_thread->start();
 }
 

@@ -98,6 +98,7 @@ signals:
     void uploadFileForFile(const QString &fileName, int index);
     void uploadFileForPicture(const QString &fileName, int index);
     void receivedGroupInvitedSignal(const QJsonArray &members, const QJsonObject &groupInfo);
+    void receiveGroupMessage(const QJsonObject &groupInfo, const QJsonObject &senderData, const QString &message);
 
 private:
     void ReadData();
@@ -145,6 +146,7 @@ signals:
     void uploadFileForFile(const QString &fileName, int index);
     void uploadFileForPicture(const QString &fileName, int index);
     void receivedGroupInvitedSignal(const QJsonArray &members, const QJsonObject &groupInfo);
+    void receiveGroupMessage(const QJsonObject &groupInfo, const QJsonObject &senderData, const QString &message);
 
 private:
     ClientWork *m_clientwork = nullptr;

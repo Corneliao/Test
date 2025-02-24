@@ -108,7 +108,6 @@ Item {
     }
 
     function increateReceiveMessage(senderData, message, messageType) {
-        console.log(senderData)
         chatwindow_script.sendMessage({
                                           "type": "receivedMessage",
                                           "value": senderData,

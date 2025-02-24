@@ -18,7 +18,7 @@ Item {
         } else {
             let item = stacklayout.children[1]
             item.jsonData = data
-            item.type = type
+            //item.type = type
         }
     }
 

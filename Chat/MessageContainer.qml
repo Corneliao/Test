@@ -48,6 +48,23 @@ Item {
             messageContainer.createChatWindowReceivedFile(senderData, fileInfo,
                                                           messageType)
         }
+
+        function onReceiveGroupMessage(groupInfo, senderData, message) {
+            console.log("收到群聊消息")
+            for (var i = 0; i < chatwindow_stacklayout.children.length; i++) {
+                var item = chatwindow_stacklayout.children[i]
+                if (item !== null) {
+                    if (groupInfo.type === "Group"
+                            && groupInfo.groupID === item.friendJsonData.groupID) {
+                        item.increateReceiveMessage(senderData, message, "Text")
+                        return
+                    }
+                }
+            }
+            messageContainer.createChatWindowReceivedGroupMessage(groupInfo,
+                                                                  senderData,
+                                                                  message)
+        }
     }
 
     //当第一次接受到好友消息时创建聊天窗口
@@ -65,7 +82,6 @@ Item {
         }
     }
 
-    //文件消息
     function createChatWindowReceivedFile(senderData, fileInfo, messageType) {
         let comp = Qt.createComponent("ChatWindow.qml", chatwindow_stacklayout)
         if (comp.status === Component.Ready) {
@@ -77,6 +93,19 @@ Item {
             hostoryMessageListView.createMessage(senderData,
                                                  fileInfo.fileName, "user")
             obj.increateReceiveFile(senderData, fileInfo, messageType)
+        }
+    }
+
+    function createChatWindowReceivedGroupMessage(groupInfo, senderData, message) {
+        let comp = Qt.createComponent("ChatWindow.qml", chatwindow_stacklayout)
+        if (comp.status === Component.Ready) {
+            let obj = comp.createObject(chatwindow_stacklayout, {
+                                            "friendJsonData": groupInfo
+                                        })
+            //obj.receivedMessageSignal.connect(increateUnreadMessageCount)
+            obj.sendMessageSignal.connect(sendMessageSignal)
+            hostoryMessageListView.createMessage(groupInfo, message, "Group")
+            obj.increateReceiveMessage(senderData, message, "Text")
         }
     }
 
