@@ -290,6 +290,16 @@ void ClientWork::sendGroupMessage(const QJsonObject &groupInfo, const QJsonObjec
     this->m_socket->flush();
 }
 
+void ClientWork::deleteFriend(const QString &account) {
+    QJsonObject object;
+    object.insert("type", "deleteFriend");
+    object.insert("account", account);
+    QJsonDocument doc(object);
+    QByteArray data = doc.toJson();
+    this->m_socket->write(data);
+    this->m_socket->flush();
+}
+
 void ClientWork::ReadData() {
     QByteArray data = this->m_socket->readAll();
 
@@ -368,6 +378,9 @@ void ClientWork::ReadData() {
             QJsonObject groupInfo = object["groupInfo"].toObject();
             QString message = object["message"].toString();
             emit this->receiveGroupMessage(groupInfo, senderData, message);
+        } else if (type == "deleteFriend") {
+            QString account = object["account"].toString();
+            emit this->deleteFriendSucceed(account);
         }
     }
 }
@@ -412,6 +425,7 @@ void ClientContainer::connectServer() {
     connect(this->m_clientwork, &ClientWork::uploadFileForPicture, this, &ClientContainer::uploadFileForPicture, Qt::QueuedConnection);
     connect(this->m_clientwork, &ClientWork::receivedGroupInvitedSignal, this, &ClientContainer::receivedGroupInvitedSignal, Qt::QueuedConnection);
     connect(this->m_clientwork, &ClientWork::receiveGroupMessage, this, &ClientContainer::receiveGroupMessage, Qt::QueuedConnection);
+    connect(this->m_clientwork, &ClientWork::deleteFriendSucceed, this, &ClientContainer::deleteFriendSucceed, Qt::QueuedConnection);
     this->m_thread->start();
 }
 
@@ -494,4 +508,8 @@ void ClientContainer::getChatMessage(const QList<QString> &accounts) {
     SaveChatHistory history;
     QFuture<QJsonArray> future = QtConcurrent::run(&SaveChatHistory::getChatMessage, accounts);
     this->watcher->setFuture(future);
+}
+
+void ClientContainer::deleteFriend(const QString &account) {
+    QMetaObject::invokeMethod(this->m_clientwork, "deleteFriend", Qt::QueuedConnection, Q_ARG(QString, account));
 }

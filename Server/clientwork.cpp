@@ -30,6 +30,20 @@ void ClientWork::init() {
     connect(this->database_manager, &UserDatabaseManager::friendDataSignal, this, &ClientWork::selectUserFriends, Qt::QueuedConnection);
     connect(
             this->database_manager,
+            &UserDatabaseManager::deleteFriendSignal,
+            this,
+            [=](const QString &account) {
+                QJsonObject object;
+                object.insert("type", "deleteFriend");
+                object.insert("account", account);
+                QJsonDocument doc(object);
+                QByteArray data = doc.toJson();
+                this->m_socket->write(data);
+                this->m_socket->flush();
+            },
+            Qt::QueuedConnection);
+    connect(
+            this->database_manager,
             &UserDatabaseManager::createGroupChatSignal,
             this,
             [=](const bool state, const QJsonObject &senderData, const QJsonArray &members, const QJsonObject &groupInfo) {
@@ -133,6 +147,9 @@ void ClientWork::ReadClientMessage() {
             QJsonObject senderData = object["senderData"].toObject();
             QString message = object["message"].toString();
             emit this->sendGroupMessageSignal(groupInfo, members, senderData, message);
+        } else if (type == "deleteFriend") {
+            QString account = object["account"].toString();
+            QMetaObject::invokeMethod(this->database_manager, "deleteFriend", Qt::QueuedConnection, Q_ARG(QString, this->m_account), Q_ARG(QString, account));
         }
     }
 }

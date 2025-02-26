@@ -202,19 +202,15 @@ Item {
                     onEntered: {
                         message_item.color = message_item.bkColor
                     }
-                    onClicked: mouse => {
-                                   if (mouse.button === Qt.LeftButton) {
-                                       message_item.ListView.view.currentIndex = message_item.index
-                                       message_item.color = message_item.bkColor
-                                       historyMessage_script.sendMessage({
-                                                                             "type": "clearUnreadCount",
-                                                                             "value": message_item.index,
-                                                                             "model": message_model
-                                                                         })
-                                   } else if (mouse.button === Qt.RightButton) {
-
-                                   }
-                               }
+                    onClicked: {
+                        message_item.ListView.view.currentIndex = message_item.index
+                        message_item.color = message_item.bkColor
+                        historyMessage_script.sendMessage({
+                                                              "type": "clearUnreadCount",
+                                                              "value": message_item.index,
+                                                              "model": message_model
+                                                          })
+                    }
                     onExited: {
                         if (message_item.ListView.view.currentIndex !== message_item.index) {
                             message_item.color = "transparent"

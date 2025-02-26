@@ -88,6 +88,7 @@ public:
     Q_INVOKABLE void downloadFile(int index, const QString &fileName, const QString &messageType);
     Q_INVOKABLE void createGroupChat(const QJsonObject &sender, const QVariant &receivers, const QString &groupName);
     Q_INVOKABLE void sendGroupMessage(const QJsonObject &groupInfo, const QJsonObject &senderData, const QString &message);
+    Q_INVOKABLE void deleteFriend(const QString &account);
 signals:
     void loginSignal(const QJsonObject &json, bool login);
     void userInfoSignal(const QByteArray &data);
@@ -104,6 +105,7 @@ signals:
     void uploadFileForPicture(const QString &fileName, int index);
     void receivedGroupInvitedSignal(const QJsonArray &members, const QJsonObject &groupInfo);
     void receiveGroupMessage(const QJsonObject &groupInfo, const QJsonObject &senderData, const QString &message);
+    void deleteFriendSucceed(const QString &account);
 
 private:
     void ReadData();
@@ -140,6 +142,7 @@ public:
     Q_INVOKABLE void sendGroupMessage(const QJsonObject &groupInfo, const QJsonObject &senderData, const QString &message);
     Q_INVOKABLE void getChatHistoryMessage(const QString &friendAccount);
     Q_INVOKABLE void getChatMessage(const QList<QString> &accounts);
+    Q_INVOKABLE void deleteFriend(const QString &account);
 
 signals:
     void loginSignal(const QJsonObject &json, bool login);
@@ -158,6 +161,7 @@ signals:
     void receivedGroupInvitedSignal(const QJsonArray &members, const QJsonObject &groupInfo);
     void receiveGroupMessage(const QJsonObject &groupInfo, const QJsonObject &senderData, const QString &message);
     void chatMessageSignal(const QJsonArray &array);
+    void deleteFriendSucceed(const QString &account);
 
 private:
     ClientWork *m_clientwork = nullptr;

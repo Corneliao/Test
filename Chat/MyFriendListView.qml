@@ -74,10 +74,26 @@ Item {
                                           "model": friend_model
                                       })
         }
+        function onDeleteFriendSucceed(account) {
+            for (var i = 0; i < friend_model.count; i++) {
+                var data = friend_model.get(i).friendData
+                if (data.type === "user") {
+                    if (account === data.account) {
+                        friend_model.remove(i)
+                        console.log("已删除好友")
+                        break
+                    }
+                }
+            }
+        }
     }
 
     CustomMenu {
         id: add_popup
+    }
+
+    CustomPopup {
+        id: friend_popup
     }
 
     ColumnLayout {
@@ -203,6 +219,7 @@ Item {
                 MouseArea {
                     anchors.fill: parent
                     hoverEnabled: true
+                    acceptedButtons: Qt.LeftButton | Qt.RightButton
                     onEntered: {
                         friend_item.color = Qt.rgba(0 / 255, 0 / 255,
                                                     0 / 255, 20 / 255)
@@ -211,14 +228,22 @@ Item {
                         if (friend_list_view.currentIndex !== friend_item.index)
                             friend_item.color = Qt.color("transparent")
                     }
-                    onClicked: {
-                        friend_list_view.currentIndex = friend_item.index
-                        friend_item.color = Qt.rgba(0 / 255, 0 / 255,
-                                                    0 / 255, 20 / 255)
-                        friendContainer.infoContainer.showInfo(
-                                    friend_item.friendData,
-                                    friend_item.friendData.type)
-                    }
+                    onClicked: mouse => {
+                                   if (mouse.button === Qt.LeftButton) {
+
+                                       friend_list_view.currentIndex = friend_item.index
+                                       friend_item.color = Qt.rgba(
+                                           0 / 255, 0 / 255, 0 / 255, 20 / 255)
+                                       friendContainer.infoContainer.showInfo(
+                                           friend_item.friendData,
+                                           friend_item.friendData.type)
+                                   } else if (mouse.button === Qt.RightButton) {
+                                       if (friend_item.friendData.type === "user") {
+                                           friend_popup.popup()
+                                           friend_popup.account = friend_item.friendData.account
+                                       }
+                                   }
+                               }
                 }
             }
             onCurrentIndexChanged: {

@@ -228,3 +228,24 @@ void UserDatabaseManager::createGroupChat(const QJsonObject &admin, const QJsonA
         qDebug() << __FUNCTION__ << "group_chat failed";
     }
 }
+
+void UserDatabaseManager::deleteFriend(const QString &user, const QString &account) {
+    QSqlDatabase db = QSqlDatabase::database(this->sql_connectionName);
+    if (!db.transaction()) {
+        return;
+    }
+
+    QSqlQuery query(db);
+    query.prepare("delete from userfriend where user = " + user + " and friend =  " + account);
+    if (query.exec()) {
+        query.prepare("delete from userfriend where user = " + account + " and friend =  " + user);
+        if (query.exec()) {
+            emit this->deleteFriendSignal(account);
+            db.commit();
+        } else {
+            db.rollback();
+        }
+    } else {
+        db.rollback();
+    }
+}
