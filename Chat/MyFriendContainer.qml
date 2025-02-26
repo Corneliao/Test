@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
+import com.global
 
 Item {
     id: friendContainer
@@ -14,6 +15,19 @@ Item {
             id: freindListView
             Layout.preferredWidth: 250
             Layout.fillHeight: true
+
+            onUpdateFinished: {
+
+                for (var i = 0; i < Global.friendModelData.count; i++) {
+                    if (Global.friendModelData.get(
+                                i).friendData.type === "user") {
+                        friendContainer.createMessageSignal(
+                                    Global.friendModelData.get(i).friendData,
+                                    Global.friendModelData.get(
+                                        i).friendData.type)
+                    }
+                }
+            }
         }
         UserInfoContainer {
             id: info_container

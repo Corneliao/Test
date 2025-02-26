@@ -47,6 +47,9 @@ WorkerScript.onMessage = function func(message) {
                          })
         }
         model.sync()
+        WorkerScript.sendMessage({
+                                     "state": "finished"
+                                 })
     } else if (type === "increateMessage") {
         var usermessage = message.message
         for (var j = 0; j < model.count; j++) {
@@ -105,6 +108,8 @@ WorkerScript.onMessage = function func(message) {
                          "friendData": group
                      })
         model.sync()
+    } else if (type === "receiveHistoryMessage") {
+        receiveHistoryMessage(message)
     }
 }
 
@@ -167,6 +172,24 @@ function receivedMessage(message) {
     model.append({
                      "stateType": "recv",
                      "account": jsonData.account,
+                     "message": usermessage,
+                     "fileInfo": {},
+                     "messageType": message_type
+                 })
+    model.sync()
+    WorkerScript.sendMessage({
+                                 "type": "recvFinished"
+                             })
+}
+
+function receiveHistoryMessage(message) {
+    var model = message.model
+    var account = message.value
+    var usermessage = message.message
+    var message_type = message.messageType
+    model.append({
+                     "stateType": "recv",
+                     "account": account,
                      "message": usermessage,
                      "fileInfo": {},
                      "messageType": message_type

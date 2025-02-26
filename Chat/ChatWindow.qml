@@ -128,6 +128,26 @@ Item {
                                       })
     }
 
+    function increateSendHistoryMessage(account, message) {
+        chatwindow_script.sendMessage({
+                                          "type": "sendMessage",
+                                          "value": Global.myJsonData.account,
+                                          "message": message,
+                                          "model": message_item_model,
+                                          "messageType": "Text"
+                                      })
+    }
+
+    function increateReceiveHistoryMessage(account, message) {
+        chatwindow_script.sendMessage({
+                                          "type": "receiveHistoryMessage",
+                                          "value": account,
+                                          "message": message,
+                                          "model": message_item_model,
+                                          "messageType": "Text"
+                                      })
+    }
+
     ColumnLayout {
         anchors.fill: parent
 

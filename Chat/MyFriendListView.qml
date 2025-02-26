@@ -7,6 +7,7 @@ import com.global
 
 Item {
 
+    signal updateFinished
     Component.onCompleted: {
         Client.selectUserFirend(Global.myJsonData.account)
         Global.friendModelData = friend_model
@@ -30,6 +31,21 @@ Item {
     WorkerScript {
         id: friend_script
         source: "qrc:/js/WorkerScript.js"
+        onMessage: messageObject => {
+                       if (messageObject.state === "finished") {
+                           freindListView.updateFinished()
+
+                           var accounts = []
+                           for (var i = 0; i < friend_model.count; i++) {
+                               var data = friend_model.get(i).friendData
+                               if (data.type === "user") {
+                                   var account = data.account
+                                   accounts.push(account)
+                               }
+                           }
+                           Client.getChatMessage(accounts)
+                       }
+                   }
     }
 
     Connections {

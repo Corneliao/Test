@@ -30,6 +30,31 @@ Item {
                                                       messageType)
         }
 
+        function onChatMessageSignal(array) {
+            for (var i = 0; i < array.length; i++) {
+                var account = array[i].friend
+                for (var j = 0; j < chatwindow_stacklayout.children.length; j++) {
+                    var item = chatwindow_stacklayout.children[j]
+                    if (item !== null) {
+                        if (account === item.friendJsonData.account) {
+                            var messageArray = array[i].History
+                            for (var h = 0; h < messageArray.length; h++) {
+                                var type = messageArray[h].type
+                                var message = messageArray[h].message
+                                if (type === "send") {
+                                    item.increateSendHistoryMessage(account,
+                                                                    message)
+                                } else {
+                                    item.increateReceiveHistoryMessage(account,
+                                                                       message)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         function onReceivedFileSignal(senderData, fileInfo, messageType) {
             //聊天窗口存在则直接更新数据
             for (var i = 0; i < chatwindow_stacklayout.children.length; i++) {

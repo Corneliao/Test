@@ -10,6 +10,10 @@
 #include <QFileInfo>
 #include <QQueue>
 #include <QDateTime>
+#include <QFile>
+#include <QtConcurrentRun>
+#include <QFuture>
+#include <QFutureWatcher>
 class UserInfo : public QObject {
     Q_OBJECT
     Q_PROPERTY(QString username READ username WRITE setUsername NOTIFY usernameChanged FINAL)
@@ -72,6 +76,7 @@ class ClientWork : public QObject {
 public:
     explicit ClientWork(QObject *parent = nullptr);
     void init();
+    Q_INVOKABLE void setUserAccount(const QString &account);
     Q_INVOKABLE void login(const QString &account, const QString &password);
     Q_INVOKABLE void registerUser(const QVariant &user_info);
     Q_INVOKABLE void searchUser(const QString &account);
@@ -107,6 +112,8 @@ private:
 
     QTcpSocket *m_socket = nullptr;
     bool isConnected = false;
+    QString m_account;
+    QJsonObject myJsonData;
 };
 
 class ClientContainer : public QObject {
@@ -117,6 +124,7 @@ public:
 
     Q_INVOKABLE void connectServer();
 
+    Q_INVOKABLE void setUserAccount(const QString &account);
     Q_INVOKABLE void login(const QString &account, const QString &password);
     Q_INVOKABLE void registerUser(const UserInfo *user_info);
     Q_INVOKABLE void searchUser(const QString &account);
@@ -130,6 +138,8 @@ public:
     Q_INVOKABLE void createGroupChat(const QJsonObject &sender, const QVariant &receivers, const QString &groupName);
     Q_INVOKABLE QSize getPictureSize(const QString &filepath);
     Q_INVOKABLE void sendGroupMessage(const QJsonObject &groupInfo, const QJsonObject &senderData, const QString &message);
+    Q_INVOKABLE void getChatHistoryMessage(const QString &friendAccount);
+    Q_INVOKABLE void getChatMessage(const QList<QString> &accounts);
 
 signals:
     void loginSignal(const QJsonObject &json, bool login);
@@ -147,10 +157,12 @@ signals:
     void uploadFileForPicture(const QString &fileName, int index);
     void receivedGroupInvitedSignal(const QJsonArray &members, const QJsonObject &groupInfo);
     void receiveGroupMessage(const QJsonObject &groupInfo, const QJsonObject &senderData, const QString &message);
+    void chatMessageSignal(const QJsonArray &array);
 
 private:
     ClientWork *m_clientwork = nullptr;
     QThread *m_thread = nullptr;
+    QFutureWatcher<QJsonArray> *watcher = nullptr;
 };
 
 #endif  // CLIENTCONTAINER_H

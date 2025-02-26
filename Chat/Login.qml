@@ -32,6 +32,7 @@ FramelessWindow {
         function onLoginSignal(data, state) {
             if (state) {
                 loginWindow.loginSignal(username_input.text)
+                Client.setUserAccount(username_input.text)
                 Global.myJsonData = data
             } else {
                 animation.to = 10

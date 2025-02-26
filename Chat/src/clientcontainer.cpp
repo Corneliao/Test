@@ -2,7 +2,7 @@
 #include "../include/miniomanager.h"
 #include <QPixmap>
 #include <qthreadpool.h>
-#include <QUuid>
+#include "../include/SaveChatHistory.h"
 UserInfo::UserInfo(QObject *parent) {}
 
 UserInfo::~UserInfo() {
@@ -97,6 +97,10 @@ void ClientWork::init() {
     connect(this->m_socket, &QTcpSocket::readyRead, this, &ClientWork::ReadData, Qt::DirectConnection);
 }
 
+void ClientWork::setUserAccount(const QString &account) {
+    this->m_account = account;
+}
+
 void ClientWork::login(const QString &account, const QString &password) {
     if (!this->isConnected)
         return;
@@ -183,6 +187,9 @@ void ClientWork::sendMessage(const QJsonObject &sender_, const QString &receiver
     QJsonDocument doc(jsonObject);
     QByteArray data = doc.toJson();
     this->m_socket->write(data);
+    this->m_socket->flush();
+
+    SaveChatHistory::saveChatMessage(message, "send", sender_["account"].toString(), receiver_);
 }
 
 void ClientWork::sendFile(const QJsonObject &sender_, const QString &receiver_, const QString &filepath, int index, const QString &messageType) {
@@ -295,6 +302,7 @@ void ClientWork::ReadData() {
             bool state = object["state"].toBool();
             if (state) {
                 object["type"] = "user";
+                this->myJsonData = object;
                 emit this->loginSignal(object, state);
             } else {
                 emit this->loginSignal(QJsonObject(), state);
@@ -342,12 +350,12 @@ void ClientWork::ReadData() {
             QJsonObject sender = object["senderData"].toObject();
             QString message = object["message"].toString();
             QString messageType = object["messageType"].toString();
+            SaveChatHistory::saveChatMessage(message, "recv", this->m_account, sender["account"].toString());
             emit this->receivedMessageSignal(sender, message, messageType);
         } else if (type == "receivedFile") {
             QJsonObject senderData = object["senderData"].toObject();
             QJsonObject fileInfo = object["fileInfo"].toObject();
             QString messageType = object["messageType"].toString();
-
             emit this->receivedFileSignal(senderData, fileInfo, messageType);
         } else if (type == "receivedGroupInvite") {
             QJsonObject adminData = object["admin"].toObject();
@@ -367,7 +375,13 @@ void ClientWork::ReadData() {
 void ClientWork::updateProgress(const qreal &pos) {}
 
 //-----------------Container
-ClientContainer::ClientContainer(QObject *parent) : QObject{parent} {}
+ClientContainer::ClientContainer(QObject *parent) : QObject{parent} {
+    this->watcher = new QFutureWatcher<QJsonArray>(this);
+    connect(this->watcher, &QFutureWatcher<QJsonArray>::finished, this, [=]() {
+        auto list = this->watcher->result();
+        emit this->chatMessageSignal(list);
+    });
+}
 
 ClientContainer::~ClientContainer() {
     if (this->m_thread) {
@@ -399,6 +413,10 @@ void ClientContainer::connectServer() {
     connect(this->m_clientwork, &ClientWork::receivedGroupInvitedSignal, this, &ClientContainer::receivedGroupInvitedSignal, Qt::QueuedConnection);
     connect(this->m_clientwork, &ClientWork::receiveGroupMessage, this, &ClientContainer::receiveGroupMessage, Qt::QueuedConnection);
     this->m_thread->start();
+}
+
+void ClientContainer::setUserAccount(const QString &account) {
+    QMetaObject::invokeMethod(this->m_clientwork, "setUserAccount", Qt::QueuedConnection, Q_ARG(QString, account));
 }
 
 void ClientContainer::login(const QString &account, const QString &password) {
@@ -464,4 +482,16 @@ QSize ClientContainer::getPictureSize(const QString &filepath) {
 
 void ClientContainer::sendGroupMessage(const QJsonObject &groupInfo, const QJsonObject &senderData, const QString &message) {
     QMetaObject::invokeMethod(this->m_clientwork, "sendGroupMessage", Qt::QueuedConnection, Q_ARG(QJsonObject, groupInfo), Q_ARG(QJsonObject, senderData), Q_ARG(QString, message));
+}
+
+void ClientContainer::getChatHistoryMessage(const QString &friendAccount) {
+    // SaveChatHistory history;
+    // QFuture<QByteArrayList> future = QtConcurrent::run(&SaveChatHistory::getChatsHistory, friendAccount);
+    // this->watcher->setFuture(future);
+}
+
+void ClientContainer::getChatMessage(const QList<QString> &accounts) {
+    SaveChatHistory history;
+    QFuture<QJsonArray> future = QtConcurrent::run(&SaveChatHistory::getChatMessage, accounts);
+    this->watcher->setFuture(future);
 }

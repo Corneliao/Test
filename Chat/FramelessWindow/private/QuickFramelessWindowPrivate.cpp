@@ -16,6 +16,7 @@ QuickFramelessWindowPrivate::QuickFramelessWindowPrivate(QuickFramelessWindow* q
 void QuickFramelessWindowPrivate::setWindowStyle() {
     Q_Q(QuickFramelessWindow);
     // q->setColor(QColor(0xeff1f2));
+    q->setColor(QColor(0xeff1f2));
     q->setFlags(this->flags() | Qt::WindowType::Window | Qt::FramelessWindowHint);
 
     // 窗口Aero风格

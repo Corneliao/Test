@@ -165,32 +165,33 @@ void UserDatabaseManager::selectUserFriend(const QString &account) {
                     data.insert("type", "user");
                     array.append(data);
                 }
-                query.prepare("select group_id from group_member where  user_id = " + account);
-                if (query.exec()) {
-                    while (query.next()) {
-                        QString groupid = query.value(0).toString();
-                        query_.prepare("select group_name from group_chat where group_id = " + groupid);
-                        if (query_.exec()) {
-                            while (query_.next()) {
-                                QString group_name = query_.value(0).toString();
-                                QJsonObject object;
-                                object.insert("groupName", group_name);
-                                object.insert("groupID", groupid);
-                                object.insert("type", "Group");
+            }
+        }
+        query.prepare("select group_id from group_member where  user_id = " + account);
+        if (query.exec()) {
+            while (query.next()) {
+                QString groupid = query.value(0).toString();
+                QSqlQuery query_(db);
+                query_.prepare("select group_name from group_chat where group_id = " + groupid);
+                if (query_.exec()) {
+                    while (query_.next()) {
+                        QString group_name = query_.value(0).toString();
+                        QJsonObject object;
+                        object.insert("groupName", group_name);
+                        object.insert("groupID", groupid);
+                        object.insert("type", "Group");
 
-                                QJsonArray groupMembers;
-                                QSqlQuery query_members(db);
-                                query_members.prepare("select user_id from group_member where group_id = " + groupid);
-                                if (query_members.exec()) {
-                                    while (query_members.next()) {
-                                        QString user_id = query_members.value(0).toString();
-                                        groupMembers.append(user_id);
-                                    }
-                                    object.insert("members", groupMembers);
-                                }
-                                array.append(object);
+                        QJsonArray groupMembers;
+                        QSqlQuery query_members(db);
+                        query_members.prepare("select user_id from group_member where group_id = " + groupid);
+                        if (query_members.exec()) {
+                            while (query_members.next()) {
+                                QString user_id = query_members.value(0).toString();
+                                groupMembers.append(user_id);
                             }
+                            object.insert("members", groupMembers);
                         }
+                        array.append(object);
                     }
                 }
             }
