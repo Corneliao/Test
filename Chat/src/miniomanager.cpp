@@ -28,7 +28,7 @@ bool MinioManager::uploadFile() {
     const QString file_md5 = hash.result().toHex();
 
     // 读取文件
-    std::ifstream infile(this->_path.toStdString(), std::ios::binary | std::ios::ate);
+    std::ifstream infile(this->_path.toStdWString(), std::ios::binary | std::ios::ate);
     if (!infile)
         return false;
     std::streamsize fileSize = infile.tellg();

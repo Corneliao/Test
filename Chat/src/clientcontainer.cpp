@@ -331,6 +331,7 @@ void ClientWork::ReadData() {
             object.insert("gender", gender);
             object.insert("phone", phone);
             object.insert("email", email);
+            object["type"] = "user";
             QJsonDocument doc(object);
             QByteArray data = doc.toJson();
             emit this->userInfoSignal(data);
@@ -347,11 +348,13 @@ void ClientWork::ReadData() {
             object.insert("gender", gender);
             object.insert("phone", phone);
             object.insert("email", email);
+            object["type"] = "user";
             QJsonDocument doc(object);
             QByteArray data = doc.toJson();
             emit this->receivedRequestUserInfoSignal(data);
         } else if (type == "updateFriendList") {
             QJsonObject userData = object["userData"].toObject();
+            userData["type"] = "user";
             emit this->updateFriendListSignal(userData);
         } else if (type == "friendData") {
             QJsonArray userData = object["userData"].toArray();

@@ -36,8 +36,7 @@ WorkerScript.onMessage = function func(message) {
         model.sync()
     } else if (type === "updateFriend") {
         model.append({
-                         "friendData": json,
-                         "type": "user"
+                         "friendData": json
                      })
         model.sync()
     } else if (type === "friendData") {
