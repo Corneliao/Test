@@ -23,6 +23,7 @@ public:
     Q_INVOKABLE void sendFile(const QJsonObject &senderData, const QJsonObject &fileInfo, const QString &messageType);
     Q_INVOKABLE void receivedGroupNotification(const QJsonObject &senderData, const QJsonArray &members, const QJsonObject &groupInfo);
     Q_INVOKABLE void sendGroupMessage(const QJsonObject &groupInfo, const QJsonObject &senderData, const QString &message);
+    Q_INVOKABLE void deleteFriend(const QString &account);
 signals:
     void disconnected();
     void loginSucceedSignal(const QString &account);
@@ -32,6 +33,7 @@ signals:
     void sendFileSignal(const QJsonObject &senderData, const QString &receiver, const QJsonObject &fileInfo, const QString &messageType);
     void createGroupChatSignal(const QJsonObject &senderData, const QJsonArray &members, const QJsonObject &groupInfo);
     void sendGroupMessageSignal(const QJsonObject &groupInfo, const QJsonArray &members, const QJsonObject &senderData, const QString &message);
+    void deleteFriendSignal(const QString &user, const QString &_friend);
 
 private:
     void ReadClientMessage();

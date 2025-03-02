@@ -223,7 +223,12 @@ void UserDatabaseManager::createGroupChat(const QJsonObject &admin, const QJsonA
         }
         query.finish();
         db.commit();
-        emit this->createGroupChatSignal(true, admin, members, groupInfo);
+        QJsonArray accounts;
+        for (int i = 0; i < members.count(); i++) {
+            accounts.append(members[i]["account"].toString());
+        }
+        qDebug() << accounts;
+        emit this->createGroupChatSignal(true, admin, accounts, groupInfo);
     } else {
         qDebug() << __FUNCTION__ << "group_chat failed";
     }
@@ -238,13 +243,24 @@ void UserDatabaseManager::deleteFriend(const QString &user, const QString &accou
     QSqlQuery query(db);
     query.prepare("delete from userfriend where user = " + user + " and friend =  " + account);
     if (query.exec()) {
-        query.prepare("delete from userfriend where user = " + account + " and friend =  " + user);
-        if (query.exec()) {
-            emit this->deleteFriendSignal(account);
-            db.commit();
-        } else {
-            db.rollback();
-        }
+        db.commit();
+
+    } else {
+        db.rollback();
+    }
+}
+
+void UserDatabaseManager::quitGroup(const QString &user, const QString &groupID) {
+    QSqlDatabase db = QSqlDatabase::database(this->sql_connectionName);
+    if (!db.transaction())
+        return;
+    QSqlQuery query(db);
+    query.prepare("delete from group_member where user_id = ? and group_id = ?");
+    query.addBindValue(user);
+    query.addBindValue(groupID);
+    if (query.exec()) {
+        db.commit();
+        emit this->quitGroupSignal(user, groupID);
     } else {
         db.rollback();
     }

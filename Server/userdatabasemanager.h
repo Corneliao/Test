@@ -22,12 +22,14 @@ public:
     Q_INVOKABLE void selectUserFriend(const QString &account);
     Q_INVOKABLE void createGroupChat(const QJsonObject &admin, const QJsonArray &members, const QJsonObject &groupInfo);
     Q_INVOKABLE void deleteFriend(const QString &user, const QString &account);
+    Q_INVOKABLE void quitGroup(const QString &user, const QString &groupID);
 signals:
     void loginSignal(const QJsonObject &json, bool login = false);
     void userInfoSignal(const QJsonObject &json);
     void friendDataSignal(const QJsonObject &json);
     void createGroupChatSignal(bool state, const QJsonObject &senderData, const QJsonArray &members, const QJsonObject &groupInfo);
     void deleteFriendSignal(const QString &account);
+    void quitGroupSignal(const QString &user, const QString &groupID);
 
 private:
     QString sql_connectionName;

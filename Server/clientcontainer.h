@@ -23,6 +23,7 @@ public:
     void sendFileToUser(const QJsonObject &senderData, const QString &receiver, const QJsonObject &fileInfo, const QString &messageType);
     void createGroupChat(const QJsonObject &senderData, const QJsonArray &members, const QJsonObject &groupInfo);
     void sendGroupMessage(const QJsonObject &groupInfo, const QJsonArray &members, const QJsonObject &senderData, const QString &message);
+    void deleteFriend(const QString &user, const QString &_friend);
 
 protected:
     void incomingConnection(qintptr socketDescript) override;

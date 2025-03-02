@@ -184,8 +184,9 @@ Item {
                                 cursorShape = Qt.PointingHandCursor
                             }
                             onClicked: {
+
                                 userinfo.sendMessage(info_page.jsonData,
-                                                     info_page.type)
+                                                     info_page.jsonData.type)
                             }
                         }
                     }

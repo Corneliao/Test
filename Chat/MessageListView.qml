@@ -88,24 +88,27 @@ Item {
             color: "white"
         }
 
-        Rectangle {
-            Layout.preferredHeight: 40
-            Layout.fillWidth: true
-            color: Qt.rgba(0 / 255, 0 / 255, 0 / 255, 40 / 255)
-            radius: 10
-            TextField {
-                placeholderText: "Search"
-                placeholderTextColor: Qt.rgba(255 / 255, 255 / 255, 255 / 255,
-                                              200 / 255)
-                width: parent.width - 5
-                height: parent.height - 2
-                color: Qt.rgba(255 / 255, 255 / 255, 255 / 255, 200 / 255)
+        // Rectangle {
+        //     Layout.preferredHeight: 40
+        //     Layout.fillWidth: true
+        //     color: Qt.rgba(0 / 255, 0 / 255, 0 / 255, 40 / 255)
+        //     radius: 10
+        //     TextField {
+        //         placeholderText: "Search"
+        //         placeholderTextColor: Qt.rgba(255 / 255, 255 / 255, 255 / 255,
+        //                                       200 / 255)
+        //         width: parent.width - 5
+        //         height: parent.height - 2
+        //         color: Qt.rgba(255 / 255, 255 / 255, 255 / 255, 200 / 255)
 
-                background: Rectangle {
-                    color: "transparent"
-                }
-                anchors.verticalCenter: parent.verticalCenter
-            }
+        //         background: Rectangle {
+        //             color: "transparent"
+        //         }
+        //         anchors.verticalCenter: parent.verticalCenter
+        //     }
+        // }
+        Loader {
+            Layout.preferredHeight: 15
         }
 
         ListView {

@@ -54,7 +54,7 @@ void Server::sendFileToUser(const QJsonObject &senderData, const QString &receiv
 void Server::createGroupChat(const QJsonObject &senderData, const QJsonArray &members, const QJsonObject &groupInfo) {
     for (int i = 0; i < members.count(); i++) {
         QMutexLocker locker(&this->mutex);
-        QString account = members[i]["account"].toString();
+        QString account = members[i].toString();
         if (this->client_account.contains(this->client_account.key(account))) {
             QMetaObject::invokeMethod(this->client_account.key(account), "receivedGroupNotification", Qt::QueuedConnection, Q_ARG(QJsonObject, senderData), Q_ARG(QJsonArray, members), Q_ARG(QJsonObject, groupInfo));
         }
@@ -69,6 +69,11 @@ void Server::sendGroupMessage(const QJsonObject &groupInfo, const QJsonArray &me
             QMetaObject::invokeMethod(this->client_account.key(account), "sendGroupMessage", Qt::QueuedConnection, Q_ARG(QJsonObject, groupInfo), Q_ARG(QJsonObject, senderData), Q_ARG(QString, message));
         }
     }
+}
+
+void Server::deleteFriend(const QString &user, const QString &_friend) {
+    QMutexLocker locker(&this->mutex);
+    QMetaObject::invokeMethod(this->client_account.key(_friend), "deleteFriend", Qt::QueuedConnection, Q_ARG(QString, user));
 }
 
 void Server::incomingConnection(qintptr socketDescript) {
@@ -87,6 +92,7 @@ void Server::incomingConnection(qintptr socketDescript) {
     connect(work, &ClientWork::sendFileSignal, this, &Server::sendFileToUser, Qt::QueuedConnection);
     connect(work, &ClientWork::createGroupChatSignal, this, &Server::createGroupChat, Qt::QueuedConnection);
     connect(work, &ClientWork::sendGroupMessageSignal, this, &Server::sendGroupMessage, Qt::QueuedConnection);
+    connect(work, &ClientWork::deleteFriendSignal, this, &Server::deleteFriend, Qt::QueuedConnection);
     thread->start();
     this->m_clients.insert(thread, work);
 }

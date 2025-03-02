@@ -122,6 +122,7 @@ Item {
     }
 
     function createChatWindowReceivedGroupMessage(groupInfo, senderData, message) {
+        //创建聊天窗口
         let comp = Qt.createComponent("ChatWindow.qml", chatwindow_stacklayout)
         if (comp.status === Component.Ready) {
             let obj = comp.createObject(chatwindow_stacklayout, {
@@ -141,7 +142,13 @@ Item {
     //创建发送消息聊天窗口
     function createChatWindow(data) {
 
-        let account = data.account
+        var account = 0
+        if (data.type === "user") {
+            account = data.account
+        } else if (data.type === "Group") {
+            account = data.groupID
+        }
+
         for (var i = 0; i < chatwindow_stacklayout.children.length; i++) {
             var item_ = chatwindow_stacklayout.children[i]
             if (item_ !== null) {
@@ -158,7 +165,7 @@ Item {
                                             "friendJsonData": data
                                         })
             obj.sendMessageSignal.connect(sendMessageSignal)
-            obj.receivedMessageSignal.connect(increateUnreadMessageCount)
+            // obj.receivedMessageSignal.connect(increateUnreadMessageCount)
         }
     }
 

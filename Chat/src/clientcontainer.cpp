@@ -266,6 +266,7 @@ void ClientWork::createGroupChat(const QJsonObject &sender, const QVariant &rece
 }
 
 void ClientWork::sendGroupMessage(const QJsonObject &groupInfo, const QJsonObject &senderData, const QString &message) {
+    qDebug() << groupInfo << senderData;
     QString sender_account = senderData["account"].toString();
 
     QJsonArray member = groupInfo["members"].toArray();
@@ -294,6 +295,18 @@ void ClientWork::deleteFriend(const QString &account) {
     QJsonObject object;
     object.insert("type", "deleteFriend");
     object.insert("account", account);
+    QJsonDocument doc(object);
+    QByteArray data = doc.toJson();
+    this->m_socket->write(data);
+    this->m_socket->flush();
+}
+
+void ClientWork::quitGroup(const QString &quiter, const QString &groupID) {
+    QJsonObject object;
+    object.insert("type", "quitGroup");
+    object.insert("user", quiter);
+    object.insert("groupID", groupID);
+
     QJsonDocument doc(object);
     QByteArray data = doc.toJson();
     this->m_socket->write(data);
@@ -371,11 +384,8 @@ void ClientWork::ReadData() {
             QString messageType = object["messageType"].toString();
             emit this->receivedFileSignal(senderData, fileInfo, messageType);
         } else if (type == "receivedGroupInvite") {
-            QJsonObject adminData = object["admin"].toObject();
-            Q_UNUSED(adminData);
-            QJsonArray array = object["members"].toArray();
-            QJsonObject groupInfo = object["groupInfo"].toObject();
-            emit this->receivedGroupInvitedSignal(array, groupInfo);
+            object["type"] = "Group";
+            emit this->receivedGroupInvitedSignal(object);
         } else if (type == "receivedGroupMessage") {
             QJsonObject senderData = object["senderData"].toObject();
             QJsonObject groupInfo = object["groupInfo"].toObject();
@@ -515,4 +525,8 @@ void ClientContainer::getChatMessage(const QList<QString> &accounts) {
 
 void ClientContainer::deleteFriend(const QString &account) {
     QMetaObject::invokeMethod(this->m_clientwork, "deleteFriend", Qt::QueuedConnection, Q_ARG(QString, account));
+}
+
+void ClientContainer::quitGroup(const QString &quiter, const QString &groupID) {
+    QMetaObject::invokeMethod(this->m_clientwork, "quitGroup", Qt::QueuedConnection, Q_ARG(QString, quiter), Q_ARG(QString, groupID));
 }

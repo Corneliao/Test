@@ -186,6 +186,38 @@ Item {
                 }
             }
 
+            Rectangle {
+                visible: chat_window.friendJsonData.type === "user" ? false : true
+                radius: 10
+                color: Qt.color("#b14347")
+                width: 80
+                height: 30
+                anchors {
+                    right: parent.right
+                    rightMargin: 15
+                    verticalCenter: parent.verticalCenter
+                }
+
+                Label {
+                    text: "退出群聊"
+                    anchors.centerIn: parent
+                    color: Qt.color("white")
+                    font.bold: true
+                    font.pixelSize: 10
+                }
+                MouseArea {
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    onEntered: {
+                        cursorShape = Qt.PointingHandCursor
+                    }
+                    onClicked: {
+                        Client.quitGroup(Global.myJsonData.account,
+                                         friendJsonData.groupID)
+                    }
+                }
+            }
+
             color: "transparent"
         }
         Rectangle {
@@ -253,7 +285,6 @@ Item {
                                                           "model": message_item_model,
                                                           "messageType": "Text"
                                                       })
-
                         if (chat_window.friendJsonData.type === "user") {
 
                             //发送个人消息

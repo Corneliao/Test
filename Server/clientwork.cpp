@@ -147,9 +147,15 @@ void ClientWork::ReadClientMessage() {
             QJsonObject senderData = object["senderData"].toObject();
             QString message = object["message"].toString();
             emit this->sendGroupMessageSignal(groupInfo, members, senderData, message);
+            qDebug() << "Ds";
         } else if (type == "deleteFriend") {
             QString account = object["account"].toString();
             QMetaObject::invokeMethod(this->database_manager, "deleteFriend", Qt::QueuedConnection, Q_ARG(QString, this->m_account), Q_ARG(QString, account));
+            emit this->deleteFriendSignal(this->m_account, account);
+        } else if (type == "quitGroup") {
+            QString user = object["user"].toString();
+            QString groupID = object["groupID"].toString();
+            QMetaObject::invokeMethod(this->database_manager, "quitGroup", Qt::QueuedConnection, Q_ARG(QString, user), Q_ARG(QString, groupID));
         }
     }
 }
@@ -202,11 +208,11 @@ void ClientWork::sendFile(const QJsonObject &senderData, const QJsonObject &file
 }
 
 void ClientWork::receivedGroupNotification(const QJsonObject &senderData, const QJsonArray &members, const QJsonObject &groupInfo) {
-    QJsonObject object;
+    Q_UNUSED(senderData);
+    QJsonObject object = groupInfo;
     object.insert("type", "receivedGroupInvite");
-    object.insert("admin", senderData);
+    // object.insert("admin", senderData);
     object.insert("members", members);
-    object.insert("groupInfo", groupInfo);
 
     QJsonDocument doc(object);
     QByteArray data = doc.toJson(QJsonDocument::Compact);
@@ -215,7 +221,7 @@ void ClientWork::receivedGroupNotification(const QJsonObject &senderData, const 
 }
 
 void ClientWork::sendGroupMessage(const QJsonObject &groupInfo, const QJsonObject &senderData, const QString &message) {
-    qDebug() << "发送群聊消息" << senderData["account"].toString();
+    qDebug() << "发送群聊消息了：" << senderData["account"].toString();
 
     QJsonObject object;
     object.insert("type", "receivedGroupMessage");
@@ -227,4 +233,8 @@ void ClientWork::sendGroupMessage(const QJsonObject &groupInfo, const QJsonObjec
     QByteArray data = doc.toJson();
     this->m_socket->write(data);
     this->m_socket->flush();
+}
+
+void ClientWork::deleteFriend(const QString &account) {
+    QMetaObject::invokeMethod(this->database_manager, "deleteFriend", Qt::QueuedConnection, Q_ARG(QString, this->m_account), Q_ARG(QString, account));
 }

@@ -51,8 +51,15 @@ WorkerScript.onMessage = function func(message) {
                                  })
     } else if (type === "increateMessage") {
         var usermessage = message.message
+        var _account = 0
         for (var j = 0; j < model.count; j++) {
-            let _account = model.get(j).messageData.account
+
+            if (json.type === "user") {
+                _account = model.get(j).messageData.account
+            } else if (json.type === "Group") {
+
+            }
+
             if (json.account === _account) {
                 return
             }
@@ -100,11 +107,8 @@ WorkerScript.onMessage = function func(message) {
     } else if (type === "receivedFile") {
         receivedFile(message)
     } else if (type === "receivedGroupInvited") {
-        var group = json.groupInfo
-        var members = json.members
-        group.members = members
         model.append({
-                         "friendData": group
+                         "friendData": json
                      })
         model.sync()
     } else if (type === "receiveHistoryMessage") {
